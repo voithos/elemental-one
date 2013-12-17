@@ -1,3 +1,4 @@
+var u = require('./utils');
 var extensions = require('./extensions');
 var cfg = require('./config');
 var data = require('./data');
@@ -24,9 +25,11 @@ function preload() {
     game.load.tileset('tiles', 'assets/tilesets/tiles_spritesheet.png', cfg.TILE_WIDTH, cfg.TILE_HEIGHT);
 
     game.load.atlas('p1', 'assets/sprites/p1_spritesheet.png', 'assets/sprites/p1_spritesheet.json');
+
+    game.load.atlasXML('items', 'assets/sprites/items_spritesheet.png', 'assets/sprites/items_spritesheet.xml');
 }
 
-var map, tileset, surface, background, player, items, cursors;
+var map, tileset, surface, background, player, clouds, items, cursors;
 
 function create() {
     game.stage.backgroundColor = cfg.BACKGROUND;
@@ -56,6 +59,19 @@ function create() {
     cfg.BACKGROUND_TILES.forEach(function(tile) {
         tileset.setCollision(tile, false, false, false, false);
     });
+
+    // Add clouds
+    if (data.levels.level1.clouds) {
+        clouds = game.add.group();
+        u.range(10).forEach(function() {
+            var c = clouds.create(game.rnd.integerInRange(0, data.levels.level1.width), game.rnd.integerInRange(0, data.levels.level1.height), 'items');
+            clouds.add(c);
+            c.animations.add('cloud', [game.rnd.pick(['cloud1.png', 'cloud2.png', 'cloud3.png'])], 1, false, false);
+            c.animations.play('cloud');
+            game.add.tween(c).to({ x: c.x - cfg.CLOUD_MOVE_OFFSET }, cfg.CLOUD_MOVE_TIME, Phaser.Easing.Cubic.InOut)
+                             .to({ x: c.x + cfg.CLOUD_MOVE_OFFSET }, cfg.CLOUD_MOVE_TIME, Phaser.Easing.Cubic.InOut).loop().start();
+        });
+    }
 
     // Layer 1 is the surface, layer 0 is the background
     surface = game.add.tilemapLayer(0, 0, cfg.GAME_WIDTH, cfg.GAME_HEIGHT, tileset, map, 1);
