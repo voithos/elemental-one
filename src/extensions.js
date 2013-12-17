@@ -10,6 +10,7 @@ function createSlopedTilemapCollider(upwardSlopes, downwardSlopes) {
             var tile = this._mapData[i];
             var slopeDistanceFromTileTop = 0;
 
+            // Detect slopes
             if (upwardSlopes.indexOf(tile.tile.index) >= 0 && sprite.body.right < tile.right) {
                 slopeDistanceFromTileTop = Math.max(0, tile.right - sprite.body.right);
             }

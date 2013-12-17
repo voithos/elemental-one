@@ -1,5 +1,6 @@
 var extensions = require('./extensions');
 var cfg = require('./config');
+var data = require('./data');
 
 /**
  * Game code
@@ -25,7 +26,7 @@ function preload() {
     game.load.atlas('p1', 'assets/sprites/p1_spritesheet.png', 'assets/sprites/p1_spritesheet.json');
 }
 
-var map, tileset, surface, background, player, cursors;
+var map, tileset, surface, background, player, items, cursors;
 
 function create() {
     game.stage.backgroundColor = cfg.BACKGROUND;
@@ -36,12 +37,24 @@ function create() {
     // Set tiles to collide on all four sides
     tileset.setCollisionRange(0, tileset.total - 1, true, true, true, true);
 
-    // Set collisions to top-only
-    (cfg.FLOATING_TILES.concat(
-        cfg.UPWARD_SLOPE_TILES).concat(
-        cfg.DOWNWARD_SLOPE_TILES)
-    ).forEach(function(tile) {
-        tileset.setCollision(tile, false, false, true, false);
+    // Set tile collisions
+    cfg.FLOATING_TILES.forEach(function(tile) {
+        var t = tileset.getTile(tile);
+        t.setCollision(false, false, true, false);
+        t.disableMaxOverlapCheck = false;
+    });
+    cfg.UPWARD_SLOPE_TILES.forEach(function(tile) {
+        var t = tileset.getTile(tile);
+        t.setCollision(false, false, true, false);
+        t.disableMaxOverlapCheck = true;
+    });
+    cfg.DOWNWARD_SLOPE_TILES.forEach(function(tile) {
+        var t = tileset.getTile(tile);
+        t.setCollision(false, false, true, false);
+        t.disableMaxOverlapCheck = true;
+    });
+    cfg.BACKGROUND_TILES.forEach(function(tile) {
+        tileset.setCollision(tile, false, false, false, false);
     });
 
     // Layer 1 is the surface, layer 0 is the background
@@ -50,10 +63,10 @@ function create() {
     surface.resizeWorld();
 
     // Add player sprite
-    player = game.add.sprite(50, 510, 'p1');
+    player = game.add.sprite(data.levels.level1.player.x, data.levels.level1.player.y, 'p1');
     player.body.collideWorldBounds = true;
     player.body.gravity.y = cfg.GRAVITY;
-    player.body.setSize(40, 75, 0, 10);
+    player.body.setSize(cfg.PLAYER_BOUND_WIDTH, cfg.PLAYER_BOUND_HEIGHT, 0, cfg.PLAYER_BOUND_H_OFFSET);
 
     player.anchor.setTo(0.5, 0.5);
 
@@ -68,7 +81,7 @@ function create() {
 
     player.animations.play('stand');
 
-    game.camera.follow(player);
+    game.camera.follow(player, Phaser.Camera.FOLLOW_PLATFORMER);
 
     cursors = game.input.keyboard.createCursorKeys();
 }
@@ -78,7 +91,7 @@ function update() {
 
     if (player.body.touching.down) {
         player.body.velocity.x = 0;
-        if (player.airborne != false) {
+        if (player.airborne !== false) {
             player.animations.play('stand');
             player.facing = 'idle';
             player.airborne = false;
@@ -88,7 +101,7 @@ function update() {
     // Movement detection
     if (cursors.left.isDown) {
         player.body.velocity.x = -cfg.MOVEMENT_VEL;
-        if (player.facing != 'left') {
+        if (player.facing !== 'left') {
             if (!player.airborne) {
                 player.animations.play('walk');
             }
@@ -97,7 +110,7 @@ function update() {
         }
     } else if (cursors.right.isDown) {
         player.body.velocity.x = cfg.MOVEMENT_VEL;
-        if (player.facing != 'right') {
+        if (player.facing !== 'right') {
             if (!player.airborne) {
                 player.animations.play('walk');
             }
@@ -106,14 +119,14 @@ function update() {
         }
     } else if (cursors.down.isDown) {
         player.body.velocity.x = 0;
-        if (player.facing != 'down') {
+        if (player.facing !== 'down') {
             if (!player.airborne) {
                 player.animations.play('duck');
             }
             player.facing = 'down';
         }
     } else if (!player.airborne) {
-        if (player.facing != 'idle') {
+        if (player.facing !== 'idle') {
             player.animations.play('stand');
             player.facing = 'idle';
         }
