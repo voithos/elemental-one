@@ -60,25 +60,49 @@ function create() {
         tileset.setCollision(tile, false, false, false, false);
     });
 
-    // Add clouds
+    createClouds();
+
+    // Layer 1 is the surface, layer 0 is the background
+    background = game.add.tilemapLayer(0, 0, cfg.GAME_WIDTH, cfg.GAME_HEIGHT, tileset, map, 0);
+    surface = game.add.tilemapLayer(0, 0, cfg.GAME_WIDTH, cfg.GAME_HEIGHT, tileset, map, 1);
+    surface.resizeWorld();
+
+    addPlayer();
+    createItems();
+
+    game.camera.follow(player, Phaser.Camera.FOLLOW_PLATFORMER);
+
+    cursors = game.input.keyboard.createCursorKeys();
+}
+
+function createClouds() {
     if (data.levels.level1.clouds) {
         clouds = game.add.group();
         u.range(10).forEach(function() {
             var c = clouds.create(game.rnd.integerInRange(0, data.levels.level1.width), game.rnd.integerInRange(0, data.levels.level1.height), 'items');
-            clouds.add(c);
             c.animations.add('cloud', [game.rnd.pick(['cloud1.png', 'cloud2.png', 'cloud3.png'])], 1, false, false);
             c.animations.play('cloud');
-            game.add.tween(c).to({ x: c.x - cfg.CLOUD_MOVE_OFFSET }, cfg.CLOUD_MOVE_TIME, Phaser.Easing.Cubic.InOut)
-                             .to({ x: c.x + cfg.CLOUD_MOVE_OFFSET }, cfg.CLOUD_MOVE_TIME, Phaser.Easing.Cubic.InOut).loop().start();
+            game.add.tween(c).to({ x: c.x - cfg.CLOUD_MOVE_OFFSET }, cfg.CLOUD_MOVE_TIME, Phaser.Easing.Linear.None)
+                             .to({ x: c.x - cfg.CLOUD_MOVE_OFFSET - 100 }, 3000, Phaser.Easing.Quadratic.Out)
+                             .to({ x: c.x - cfg.CLOUD_MOVE_OFFSET }, 3000, Phaser.Easing.Quadratic.In)
+                             .to({ x: c.x + cfg.CLOUD_MOVE_OFFSET }, cfg.CLOUD_MOVE_TIME, Phaser.Easing.Linear.None)
+                             .to({ x: c.x + cfg.CLOUD_MOVE_OFFSET + 100 }, 3000, Phaser.Easing.Quadratic.Out)
+                             .to({ x: c.x + cfg.CLOUD_MOVE_OFFSET }, 3000, Phaser.Easing.Quadratic.In)
+                             .loop().start();
         });
     }
+}
 
-    // Layer 1 is the surface, layer 0 is the background
-    surface = game.add.tilemapLayer(0, 0, cfg.GAME_WIDTH, cfg.GAME_HEIGHT, tileset, map, 1);
-    background = game.add.tilemapLayer(0, 0, cfg.GAME_WIDTH, cfg.GAME_HEIGHT, tileset, map, 0);
-    surface.resizeWorld();
+function createItems() {
+    items = game.add.group();
+    data.levels.level1.items.forEach(function(item) {
+        var i = items.create(item.x, item.y, 'items');
+        i.animations.add('item', [item.frameName], 1, false, false);
+        i.animations.play('item');
+    });
+}
 
-    // Add player sprite
+function addPlayer() {
     player = game.add.sprite(data.levels.level1.player.x, data.levels.level1.player.y, 'p1');
     player.body.collideWorldBounds = true;
     player.body.gravity.y = cfg.GRAVITY;
@@ -97,9 +121,6 @@ function create() {
 
     player.animations.play('stand');
 
-    game.camera.follow(player, Phaser.Camera.FOLLOW_PLATFORMER);
-
-    cursors = game.input.keyboard.createCursorKeys();
 }
 
 function update() {

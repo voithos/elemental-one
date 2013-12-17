@@ -11,8 +11,8 @@ module.exports = {
     MOVEMENT_VEL: 200,
     JUMP_VEL: 500,
 
-    CLOUD_MOVE_OFFSET: 500,
-    CLOUD_MOVE_TIME: 60000,
+    CLOUD_MOVE_OFFSET: 1000,
+    CLOUD_MOVE_TIME: 30000,
 
     /**
      * Asset settings
