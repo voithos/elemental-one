@@ -18,7 +18,7 @@ function createSlopedTilemapCollider(upwardSlopes, downwardSlopes) {
                 slopeDistanceFromTileTop = Math.max(0, sprite.body.x - tile.x);
             }
 
-            var shouldSeparate = (slopeDistanceFromTileTop == 0 || sprite.body.bottom > tile.y + slopeDistanceFromTileTop);
+            var shouldSeparate = (slopeDistanceFromTileTop === 0 || sprite.body.bottom > tile.y + slopeDistanceFromTileTop);
 
             if (shouldSeparate && this.separateTile(sprite.body, this._mapData[i])) {
                 //  They collided, is there a custom process callback?

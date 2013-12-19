@@ -1,2 +1,2 @@
-Element of One
+Elemental One
 ==============
