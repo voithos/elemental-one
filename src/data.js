@@ -29,15 +29,21 @@ module.exports = {
                 num: 200,
                 gravity: 2,
                 lifespan: 1000,
-                minParticleScale: 1.0,
-                maxParticleScale: 1.5,
+                particleScale: {
+                    min: 1.0,
+                    max: 1.5
+                },
+                angularVel: {
+                    min: -20,
+                    max: 20
+                },
                 speedX: {
                     min: 100,
                     max: 300
                 },
                 speedY: {
-                    min: -100,
-                    max: 100
+                    min: -150,
+                    max: 150
                 }
             }]
         }

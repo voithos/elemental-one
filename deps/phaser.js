@@ -37204,7 +37204,7 @@ Phaser.Particles.Arcade.Emitter = function (game, x, y, maxParticles) {
     * @property {number} minParticleScale
     * @default
     */
-    this.minParticleScale = 1;
+    this.minParticleScale = new Phaser.Point(1, 1);
 
     /**
     * The maximum possible scale of a particle.
@@ -37212,7 +37212,7 @@ Phaser.Particles.Arcade.Emitter = function (game, x, y, maxParticles) {
     * @property {number} maxParticleScale
     * @default
     */
-    this.maxParticleScale = 1;
+    this.maxParticleScale = new Phaser.Point(1, 1);
 
     /**
     * The minimum possible angular velocity of a particle.  The default value is -360.
@@ -37591,10 +37591,11 @@ Phaser.Particles.Arcade.Emitter.prototype.emitParticle = function () {
         particle.body.angularVelocity = this.minRotation;
     }
 
-    if (this.minParticleScale !== 1 || this.maxParticleScale !== 1)
+    if (this.minParticleScale.x !== 1 || this.minParticleScale.y !== 1 || this.maxParticleScale.x !== 1 || this.maxParticleScale.y !== 1)
     {
-        var scale = this.game.rnd.realInRange(this.minParticleScale, this.maxParticleScale);
-        particle.scale.setTo(scale, scale);
+        var scaleX = this.game.rnd.realInRange(this.minParticleScale.x, this.maxParticleScale.x);
+        var scaleY = this.game.rnd.realInRange(this.minParticleScale.y, this.maxParticleScale.y);
+        particle.scale.setTo(scaleX, scaleY);
     }
 
     particle.body.drag.x = this.particleDrag.x;
@@ -37613,6 +37614,26 @@ Phaser.Particles.Arcade.Emitter.prototype.setSize = function (width, height) {
 
     this.width = width;
     this.height = height;
+
+}
+
+Phaser.Particles.Arcade.Emitter.prototype.setXParticleScale = function (min, max) {
+
+    min = min || 1;
+    max = max || 1;
+
+    this.minParticleScale.x = min;
+    this.maxParticleScale.x = max;
+
+}
+
+Phaser.Particles.Arcade.Emitter.prototype.setYParticleScale = function (min, max) {
+
+    min = min || 1;
+    max = max || 1;
+
+    this.minParticleScale.y = min;
+    this.maxParticleScale.y = max;
 
 }
 
