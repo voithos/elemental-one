@@ -5,15 +5,19 @@
  </tileset>
  <layer name="background" width="30" height="12">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUDBYwcwDtpabdMxkImzlzFBPEAKY+Lzg=
+   eJxjYBgFo2AUkAv0qGzeTALyjlDaCklME4mthIRJtZeQ3eSYh8/MmaOYIAYAA68wcA==
   </data>
  </layer>
  <layer name="surface" width="30" height="12">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2DogWgqmxcIpRuBOAOKOQnYq0eiHYpQc2NwyM+E0jOw2I1srxUeO5SQMMw+USSzA7HomYnEnsGA8D+5WBTJvBI86nCFwyhAAADGdhI4
+   eJxjYBgFo2AUBELpRiDOgGJOKtuhCDU3Bof8TCg9g0p2w+wTRTI7EIu6mUjsGQwI/5OLRZHMK8GjDlc4jAIEAACYEhBZ
   </data>
  </layer>
  <objectgroup name="items" width="30" height="12">
   <object x="1087" y="580"/>
+  <object x="1995" y="526"/>
+  <object x="1715" y="528"/>
+  <object x="1716" y="458"/>
+  <object x="1716" y="389"/>
  </objectgroup>
 </map>

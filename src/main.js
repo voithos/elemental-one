@@ -27,9 +27,13 @@ function preload() {
     game.load.atlas('p1', 'assets/sprites/p1_spritesheet.png', 'assets/sprites/p1_spritesheet.json');
 
     game.load.atlasXML('items', 'assets/sprites/items_spritesheet.png', 'assets/sprites/items_spritesheet.xml');
+    game.load.atlasXML('particles', 'assets/sprites/particles.png', 'assets/sprites/particles.xml');
 }
 
-var map, tileset, surface, background, player, clouds, items, cursors;
+var map, tileset, surface, background,
+    player, clouds, items,
+    elemEmitters = {},
+    cursors, elemButton;
 
 function create() {
     game.stage.backgroundColor = cfg.BACKGROUND;
@@ -69,25 +73,29 @@ function create() {
 
     addPlayer();
     createItems();
+    createEmitters();
+    player.element = 'air';
 
     game.camera.follow(player, Phaser.Camera.FOLLOW_PLATFORMER);
 
     cursors = game.input.keyboard.createCursorKeys();
+    elemButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 }
 
 function createClouds() {
     if (data.levels.level1.clouds) {
         clouds = game.add.group();
         u.range(10).forEach(function() {
+            var offset = cfg.CLOUD_MOVE_OFFSET * game.rnd.realInRange(0.8, 1.2);
             var c = clouds.create(game.rnd.integerInRange(0, data.levels.level1.width), game.rnd.integerInRange(0, data.levels.level1.height), 'items');
             c.animations.add('cloud', [game.rnd.pick(['cloud1.png', 'cloud2.png', 'cloud3.png'])], 1, false, false);
             c.animations.play('cloud');
-            game.add.tween(c).to({ x: c.x - cfg.CLOUD_MOVE_OFFSET }, cfg.CLOUD_MOVE_TIME, Phaser.Easing.Linear.None)
-                             .to({ x: c.x - cfg.CLOUD_MOVE_OFFSET - 100 }, 3000, Phaser.Easing.Quadratic.Out)
-                             .to({ x: c.x - cfg.CLOUD_MOVE_OFFSET }, 3000, Phaser.Easing.Quadratic.In)
-                             .to({ x: c.x + cfg.CLOUD_MOVE_OFFSET }, cfg.CLOUD_MOVE_TIME, Phaser.Easing.Linear.None)
-                             .to({ x: c.x + cfg.CLOUD_MOVE_OFFSET + 100 }, 3000, Phaser.Easing.Quadratic.Out)
-                             .to({ x: c.x + cfg.CLOUD_MOVE_OFFSET }, 3000, Phaser.Easing.Quadratic.In)
+            game.add.tween(c).to({ x: c.x - offset }, cfg.CLOUD_MOVE_TIME, Phaser.Easing.Linear.None)
+                             .to({ x: c.x - offset - 100 }, 3000, Phaser.Easing.Quadratic.Out)
+                             .to({ x: c.x - offset }, 3000, Phaser.Easing.Quadratic.In)
+                             .to({ x: c.x + offset }, cfg.CLOUD_MOVE_TIME, Phaser.Easing.Linear.None)
+                             .to({ x: c.x + offset + 100 }, 3000, Phaser.Easing.Quadratic.Out)
+                             .to({ x: c.x + offset }, 3000, Phaser.Easing.Quadratic.In)
                              .loop().start();
         });
     }
@@ -99,6 +107,41 @@ function createItems() {
         var i = items.create(item.x, item.y, 'items');
         i.animations.add('item', [item.frameName], 1, false, false);
         i.animations.play('item');
+
+        i.body.gravity.y = cfg.GRAVITY;
+        i.body.collideWorldBounds = true;
+
+        if (item.body) {
+            i.body.setSize(item.body.width || i.body.sourceWidth,
+                           item.body.height || i.body.sourceHeight,
+                           item.body.x || i.body.offset.x,
+                           item.body.y || i.body.offset.y);
+        }
+    });
+}
+
+function createEmitters() {
+    data.levels.level1.elements.forEach(function(elem) {
+        var emitter = game.add.emitter(0, 0, cfg.MAX_PARTICLES);
+        emitter.makeParticles('particles', [elem.frameName], elem.num, true, true);
+
+        emitter.gravity = elem.gravity || emitter.gravity;
+        emitter.lifespan = elem.lifespan || emitter.lifespan;
+        emitter.minParticleScale = elem.minParticleScale || emitter.minParticleScale;
+        emitter.maxParticleScale = elem.maxParticleScale || emitter.maxParticleScale;
+
+        if (elem.angularVel) {
+            emitter.setRotation(elem.angularVel.min, elem.angularVel.max);
+        }
+        if (elem.speedX) {
+            emitter.setXSpeed(elem.speedX.min, elem.speedX.max);
+            emitter.speedX = elem.speedX;
+        }
+        if (elem.speedY) {
+            emitter.setYSpeed(elem.speedY.min, elem.speedY.max);
+        }
+
+        elemEmitters[elem.type] = emitter;
     });
 }
 
@@ -112,6 +155,7 @@ function addPlayer() {
 
     // Animations are used for still frames as well, for convenience
     player.animations.add('stand', ['p1_stand'], 1, false, false);
+    player.animations.add('use', ['p1_use'], 1, false, false);
     player.animations.add('duck', ['p1_duck'], 1, false, false);
     player.animations.add('hurt', ['p1_hurt'], 1, false, false);
     player.animations.add('jump', ['p1_jump'], 1, false, false);
@@ -124,8 +168,21 @@ function addPlayer() {
 }
 
 function update() {
-    game.physics.collide(player, surface);
+    var emitter = elemEmitters[player.element] || null;
 
+    // Collisions
+    game.physics.collide(player, surface);
+    game.physics.collide(items, surface);
+    if (emitter) {
+        game.physics.collide(emitter, surface);
+
+        // Fade out particles as time goes on
+        emitter.forEachAlive(function(p) {
+            p.alpha = p.lifespan / emitter.lifespan;
+        });
+    }
+
+    // Reset player movement if touching ground
     if (player.body.touching.down) {
         player.body.velocity.x = 0;
         if (player.airborne !== false) {
@@ -176,6 +233,46 @@ function update() {
         player.airborne = true;
     }
 
+    // Elemental emission
+    if (emitter) {
+        if (elemButton.isDown && player.facing === 'idle') {
+
+            // Setup emitter properties if the player is starting to fire
+            if (!player.isFiring) {
+                player.animations.play('use');
+
+                // Set default X speed if not used
+                if (!emitter.speedX) {
+                    emitter.speedX = {
+                        min: emitter.minParticleSpeed.x,
+                        max: emitter.maxParticleSpeed.x
+                    };
+                }
+
+                // Flip the position if needed
+                if (!player.flipped) {
+                    emitter.emitX = player.x + cfg.PARTICLE_X_OFFSET;
+                    emitter.emitY = player.y + cfg.PARTICLE_Y_OFFSET;
+
+                    emitter.setXSpeed(emitter.speedX.min, emitter.speedX.max);
+                } else {
+                    emitter.emitX = player.x - cfg.PARTICLE_X_OFFSET;
+                    emitter.emitY = player.y + cfg.PARTICLE_Y_OFFSET;
+                    emitter.setXSpeed(emitter.speedX.min * -1,
+                                      emitter.speedX.max * -1);
+                }
+            }
+            player.isFiring = true;
+
+            emitter.emitParticle();
+        } else {
+            if (player.isFiring) {
+                player.animations.play('stand');
+            }
+            player.isFiring = false;
+        }
+    }
+
     // Flip player sprite
     if (player.flipped) {
         player.scale.x = -1;
@@ -186,4 +283,6 @@ function update() {
 
 function render() {
     // game.debug.renderSpriteBody(player);
+    // game.debug.renderSpriteBody(items.getAt(0));
+    // game.debug.renderSpriteInfo(player, 150, 150);
 }
