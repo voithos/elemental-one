@@ -197,6 +197,7 @@ function update() {
     }
 
     // Reset player movement if touching ground
+    // Otherwise, mark as airborne (when player hasn't jumped, but falls)
     if (player.body.touching.down) {
         player.body.velocity.x = 0;
         if (player.airborne !== false) {
@@ -204,6 +205,8 @@ function update() {
             player.facing = 'idle';
             player.airborne = false;
         }
+    } else {
+        player.airborne = true;
     }
 
     // Movement detection
@@ -249,7 +252,7 @@ function update() {
 
     // Elemental emission
     if (emitter) {
-        if (elemButton.isDown && player.facing === 'idle') {
+        if (elemButton.isDown && player.facing === 'idle' && !player.airborne) {
 
             // Setup emitter properties if the player is starting to fire
             if (!player.isFiring) {
@@ -260,23 +263,19 @@ function update() {
                     emitter.emitX = player.x + cfg.PARTICLE_X_OFFSET;
                     emitter.emitY = player.y + cfg.PARTICLE_Y_OFFSET;
 
-                    emitter.setXSpeed(emitter.speedX.min, emitter.speedX.max);
-                    emitter.setXParticleScale(emitter.particleScale.min, emitter.particleScale.max)
+                    emitter.flipped = false;
                 } else {
                     emitter.emitX = player.x - cfg.PARTICLE_X_OFFSET;
                     emitter.emitY = player.y + cfg.PARTICLE_Y_OFFSET;
 
-                    emitter.setXSpeed(emitter.speedX.min * -1,
-                                      emitter.speedX.max * -1);
-                    emitter.setXParticleScale(emitter.particleScale.min * -1,
-                                              emitter.particleScale.max * -1)
+                    emitter.flipped = true;
                 }
             }
             player.isFiring = true;
 
             emitter.emitParticle();
         } else {
-            if (player.isFiring) {
+            if (player.isFiring && player.facing === 'idle' && !player.airborne) {
                 player.animations.play('stand');
             }
             player.isFiring = false;
