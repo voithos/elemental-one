@@ -37204,7 +37204,9 @@ Phaser.Particles.Arcade.Emitter = function (game, x, y, maxParticles) {
     * @property {number} minParticleScale
     * @default
     */
-    this.minParticleScale = new Phaser.Point(1, 1);
+    this.minParticleScale = 1;
+
+    this.flipped = false;
 
     /**
     * The maximum possible scale of a particle.
@@ -37212,7 +37214,7 @@ Phaser.Particles.Arcade.Emitter = function (game, x, y, maxParticles) {
     * @property {number} maxParticleScale
     * @default
     */
-    this.maxParticleScale = new Phaser.Point(1, 1);
+    this.maxParticleScale = 1;
 
     /**
     * The minimum possible angular velocity of a particle.  The default value is -360.
@@ -37565,10 +37567,16 @@ Phaser.Particles.Arcade.Emitter.prototype.emitParticle = function () {
     if (this.minParticleSpeed.x != this.maxParticleSpeed.x)
     {
         particle.body.velocity.x = this.game.rnd.integerInRange(this.minParticleSpeed.x, this.maxParticleSpeed.x);
+        if (this.flipped) {
+            particle.body.velocity.x *= -1;
+        }
     }
     else
     {
         particle.body.velocity.x = this.minParticleSpeed.x;
+        if (this.flipped) {
+            particle.body.velocity.x *= -1;
+        }
     }
 
     if (this.minParticleSpeed.y != this.maxParticleSpeed.y)
@@ -37591,11 +37599,14 @@ Phaser.Particles.Arcade.Emitter.prototype.emitParticle = function () {
         particle.body.angularVelocity = this.minRotation;
     }
 
-    if (this.minParticleScale.x !== 1 || this.minParticleScale.y !== 1 || this.maxParticleScale.x !== 1 || this.maxParticleScale.y !== 1)
+    if (this.minParticleScale !== 1 || this.maxParticleScale !== 1)
     {
-        var scaleX = this.game.rnd.realInRange(this.minParticleScale.x, this.maxParticleScale.x);
-        var scaleY = this.game.rnd.realInRange(this.minParticleScale.y, this.maxParticleScale.y);
-        particle.scale.setTo(scaleX, scaleY);
+        var scale = this.game.rnd.realInRange(this.minParticleScale, this.maxParticleScale);
+        if (this.flipped) {
+            particle.scale.setTo(-scale, scale);
+        } else {
+            particle.scale.setTo(scale, scale);
+        }
     }
 
     particle.body.drag.x = this.particleDrag.x;
@@ -37614,26 +37625,6 @@ Phaser.Particles.Arcade.Emitter.prototype.setSize = function (width, height) {
 
     this.width = width;
     this.height = height;
-
-}
-
-Phaser.Particles.Arcade.Emitter.prototype.setXParticleScale = function (min, max) {
-
-    min = min || 1;
-    max = max || 1;
-
-    this.minParticleScale.x = min;
-    this.maxParticleScale.x = max;
-
-}
-
-Phaser.Particles.Arcade.Emitter.prototype.setYParticleScale = function (min, max) {
-
-    min = min || 1;
-    max = max || 1;
-
-    this.minParticleScale.y = min;
-    this.maxParticleScale.y = max;
 
 }
 

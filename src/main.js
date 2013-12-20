@@ -129,27 +129,14 @@ function createEmitters() {
         emitter.lifespan = elem.lifespan || emitter.lifespan;
 
         if (elem.particleScale) {
-            emitter.particleScale = elem.particleScale;
-            emitter.setXParticleScale(elem.particleScale.min, elem.particleScale.max);
-            emitter.setYParticleScale(elem.particleScale.min, elem.particleScale.max);
-        } else {
-            emitter.particleScale = {
-                min: emitter.minParticleScale.x,
-                max: emitter.maxParticleScale.x
-            };
+            emitter.minParticleScale = elem.particleScale.min;
+            emitter.maxParticleScale = elem.particleScale.max;
         }
         if (elem.angularVel) {
             emitter.setRotation(elem.angularVel.min, elem.angularVel.max);
         }
         if (elem.speedX) {
-            emitter.speedX = elem.speedX;
             emitter.setXSpeed(elem.speedX.min, elem.speedX.max);
-        } else {
-            // Set default X speed if not used
-            emitter.speedX = {
-                min: emitter.minParticleSpeed.x,
-                max: emitter.maxParticleSpeed.x
-            };
         }
         if (elem.speedY) {
             emitter.setYSpeed(elem.speedY.min, elem.speedY.max);
