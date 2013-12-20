@@ -74,7 +74,7 @@ function create() {
     addPlayer();
     createItems();
     createEmitters();
-    player.element = 'air';
+    player.element = 'earth';
 
     game.camera.follow(player, Phaser.Camera.FOLLOW_PLATFORMER);
 

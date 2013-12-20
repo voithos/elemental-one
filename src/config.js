@@ -15,7 +15,7 @@ module.exports = {
     CLOUD_MOVE_TIME: 30000,
 
     MAX_PARTICLES: 250,
-    PARTICLE_X_OFFSET: 40,
+    PARTICLE_X_OFFSET: 45,
     PARTICLE_Y_OFFSET: 10,
 
     /**
