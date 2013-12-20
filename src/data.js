@@ -93,6 +93,61 @@ var elements = {
     }
 };
 
+var powergems = {
+    air: {
+        itemType: 'powergem',
+        itemProps: {
+            element: 'air'
+        },
+        frameName: 'gemYellow.png',
+        body: {
+            x: 20,
+            y: 20,
+            width: 30,
+            height: 30
+        }
+    },
+    water: {
+        itemType: 'powergem',
+        itemProps: {
+            element: 'water'
+        },
+        frameName: 'gemBlue.png',
+        body: {
+            x: 20,
+            y: 20,
+            width: 30,
+            height: 30
+        }
+    },
+    earth: {
+        itemType: 'powergem',
+        itemProps: {
+            element: 'earth'
+        },
+        frameName: 'gemGreen.png',
+        body: {
+            x: 20,
+            y: 20,
+            width: 30,
+            height: 30
+        }
+    },
+    fire: {
+        itemType: 'powergem',
+        itemProps: {
+            element: 'fire'
+        },
+        frameName: 'gemRed.png',
+        body: {
+            x: 20,
+            y: 20,
+            width: 30,
+            height: 30
+        }
+    }
+};
+
 module.exports = {
     state: {
         level: 'level1'
@@ -106,19 +161,18 @@ module.exports = {
                 x: 150,
                 y: 580
             },
-            items: [{
-                type: 'powergem',
-                frameName: 'gemBlue.png',
-                x: 1085,
-                y: 580,
-                body: {
-                    x: 20,
-                    y: 20,
-                    width: 30,
-                    height: 30
-                }
-            }],
-            elements: [elements.air, elements.water, elements.earth, elements.fire]
+            items: [
+                Phaser.Utils.extend(powergems.water, {
+                    x: 1085,
+                    y: 580
+                })
+            ],
+            elements: [
+                elements.air,
+                elements.water,
+                elements.earth,
+                elements.fire
+            ]
         }
     }
 };

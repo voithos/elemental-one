@@ -74,7 +74,6 @@ function create() {
     addPlayer();
     createItems();
     createEmitters();
-    player.element = 'earth';
 
     game.camera.follow(player, Phaser.Camera.FOLLOW_PLATFORMER);
 
@@ -105,6 +104,8 @@ function createItems() {
     items = game.add.group();
     data.levels.level1.items.forEach(function(item) {
         var i = items.create(item.x, item.y, 'items');
+        i.itemType = item.itemType;
+
         i.animations.add('item', [item.frameName], 1, false, false);
         i.animations.play('item');
 
@@ -116,6 +117,14 @@ function createItems() {
                            item.body.height || i.body.sourceHeight,
                            item.body.x || i.body.offset.x,
                            item.body.y || i.body.offset.y);
+        }
+
+        if (item.itemProps) {
+            for (var prop in item.itemProps) {
+                if (item.itemProps.hasOwnProperty(prop)) {
+                    i[prop] = item.itemProps[prop];
+                }
+            }
         }
     });
 }
@@ -220,6 +229,17 @@ function update() {
         if (player.facing !== 'down') {
             if (!player.airborne) {
                 player.animations.play('duck');
+
+                // Detect item acquisition
+                if (!player.element) {
+                    game.physics.overlap(player, items, function(player, item) {
+                        if (item.itemType === 'powergem') {
+                            player.powergem = item;
+                            player.element = item.element;
+                            item.kill();
+                        }
+                    });
+                }
             }
             player.facing = 'down';
         }
