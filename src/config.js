@@ -18,7 +18,7 @@ module.exports = {
     PARTICLE_X_OFFSET: 45,
     PARTICLE_Y_OFFSET: 10,
 
-    ITEM_GRAVITY: 2,
+    ELEM_GRAVITY: 2,
     ITEM_FADE_TIME: 1000,
     ITEM_ACQUIRE_OFFSET: 25,
 

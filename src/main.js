@@ -28,11 +28,12 @@ function preload() {
     game.load.atlas('p1', 'assets/sprites/p1_spritesheet.png', 'assets/sprites/p1_spritesheet.json');
 
     game.load.atlasXML('items', 'assets/sprites/items_spritesheet.png', 'assets/sprites/items_spritesheet.xml');
+    game.load.spritesheet('blocks', 'assets/tilesets/tiles_spritesheet.png', cfg.TILE_WIDTH, cfg.TILE_HEIGHT);
     game.load.atlasXML('particles', 'assets/sprites/particles.png', 'assets/sprites/particles.xml');
 }
 
 var map, tileset, surface, background,
-    player, clouds, items,
+    player, clouds, items, blocks,
     elemEmitters = {},
     cursors, elemButton, acquireButton;
 
@@ -72,6 +73,7 @@ function create() {
     surface = game.add.tilemapLayer(0, 0, cfg.GAME_WIDTH, cfg.GAME_HEIGHT, tileset, map, 1);
     surface.resizeWorld();
 
+    createBlocks();
     addPlayer();
     createItems();
     createEmitters();
@@ -104,31 +106,41 @@ function createClouds() {
 
 function createItems() {
     items = game.add.group();
-    data.levels.level1.items.forEach(function(item) {
-        var i = items.create(item.x, item.y, 'items');
-        i.itemType = item.itemType;
+    createLevelElements(data.levels.level1.items, items, 'items');
+}
 
-        i.animations.add('item', [item.frameName], 1, false, false);
-        i.animations.play('item');
+function createBlocks() {
+    blocks = game.add.group();
+    createLevelElements(data.levels.level1.blocks, blocks, 'blocks');
+}
 
-        i.body.gravity.y = cfg.ITEM_GRAVITY;
-        i.body.collideWorldBounds = true;
+function createLevelElements(elems, group, type) {
+    var addLevelElement = function(el) {
+        var e = group.create(el.x, el.y, type, el.frameName || el.frameId);
+        e.elemType = el.elemType;
 
-        if (item.body) {
-            i.body.setSize(item.body.width || i.body.sourceWidth,
-                           item.body.height || i.body.sourceHeight,
-                           item.body.x || i.body.offset.x,
-                           item.body.y || i.body.offset.y);
+        e.body.gravity.y = cfg.ELEM_GRAVITY;
+        e.body.collideWorldBounds = true;
+
+        if (el.body) {
+            e.body.setSize(el.body.width || e.body.sourceWidth,
+                           el.body.height || e.body.sourceHeight,
+                           el.body.x || e.body.offset.x,
+                           el.body.y || e.body.offset.y);
+            e.body.immovable = el.body.immovable || e.body.immovable;
+            e.body.gravity.y = el.body.gravity || cfg.ELEM_GRAVITY;
         }
 
-        if (item.itemProps) {
-            for (var prop in item.itemProps) {
-                if (item.itemProps.hasOwnProperty(prop)) {
-                    i[prop] = item.itemProps[prop];
+        if (el.props) {
+            for (var prop in el.props) {
+                if (el.props.hasOwnProperty(prop)) {
+                    e[prop] = el.props[prop];
                 }
             }
         }
-    });
+    };
+
+    elems.forEach(addLevelElement);
 }
 
 function createEmitters() {
@@ -160,6 +172,7 @@ function createEmitters() {
 function addPlayer() {
     player = game.add.sprite(data.levels.level1.player.x, data.levels.level1.player.y, 'p1');
     player.body.collideWorldBounds = true;
+    player.body.blockable = true;
     player.body.gravity.y = cfg.GRAVITY;
     player.body.setSize(cfg.PLAYER_BOUND_WIDTH, cfg.PLAYER_BOUND_HEIGHT, 0, cfg.PLAYER_BOUND_H_OFFSET);
 
@@ -184,7 +197,10 @@ function update() {
 
     // Collisions
     game.physics.collide(player, surface);
+    game.physics.collide(player, blocks);
     game.physics.collide(items, surface);
+    game.physics.collide(blocks, surface);
+    game.physics.collide(blocks, blocks);
     if (emitter) {
         game.physics.collide(emitter, surface);
 

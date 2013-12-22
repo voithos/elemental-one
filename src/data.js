@@ -1,3 +1,9 @@
+var instance = function() {
+    var args = Array.prototype.slice.call(arguments);
+    args.unshift({});
+    return Phaser.Utils.extend.apply(null, args);
+};
+
 var acquirePowergem = function(player, item) {
     player.powergem = item;
     player.element = item.element;
@@ -100,8 +106,8 @@ var elements = {
 
 var powergems = {
     air: {
-        itemType: 'powergem',
-        itemProps: {
+        elemType: 'powergem',
+        props: {
             element: 'air',
             acquire: acquirePowergem
         },
@@ -114,8 +120,8 @@ var powergems = {
         }
     },
     water: {
-        itemType: 'powergem',
-        itemProps: {
+        elemType: 'powergem',
+        props: {
             element: 'water',
             acquire: acquirePowergem
         },
@@ -128,8 +134,8 @@ var powergems = {
         }
     },
     earth: {
-        itemType: 'powergem',
-        itemProps: {
+        elemType: 'powergem',
+        props: {
             element: 'earth',
             acquire: acquirePowergem
         },
@@ -142,8 +148,8 @@ var powergems = {
         }
     },
     fire: {
-        itemType: 'powergem',
-        itemProps: {
+        elemType: 'powergem',
+        props: {
             element: 'fire',
             acquire: acquirePowergem
         },
@@ -153,6 +159,61 @@ var powergems = {
             y: 20,
             width: 30,
             height: 30
+        }
+    }
+};
+
+var powerblocks = {
+    air: {
+        elemType: 'powerblock',
+        props: {
+            element: 'air'
+        },
+        frameId: 54,
+        body: {
+            x: 0,
+            y: 0,
+            width: 70,
+            height: 70
+        }
+    },
+    water: {
+        elemType: 'powerblock',
+        props: {
+            element: 'water'
+        },
+        frameId: 90,
+        body: {
+            x: 0,
+            y: 0,
+            width: 70,
+            height: 70
+        }
+    },
+    earth: {
+        elemType: 'powerblock',
+        props: {
+            element: 'earth'
+        },
+        frameId: 97,
+        body: {
+            x: 0,
+            y: 0,
+            width: 70,
+            height: 70
+        }
+    },
+    fire: {
+        elemType: 'powerblock',
+        props: {
+            element: 'fire'
+        },
+        frameId: 66,
+        body: {
+            x: 0,
+            y: 0,
+            width: 70,
+            height: 70
         }
     }
 };
@@ -167,13 +228,27 @@ module.exports = {
             height: 840,
             clouds: 15,
             player: {
-                x: 150,
-                y: 580
+                x: 1550,
+                y: 380
             },
             items: [
-                Phaser.Utils.extend(powergems.water, {
+                instance(powergems.water, {
                     x: 1085,
                     y: 580
+                })
+            ],
+            blocks: [
+                instance(powerblocks.water, {
+                    x: 1715,
+                    y: 480
+                }),
+                instance(powerblocks.water, {
+                    x: 1715,
+                    y: 410
+                }),
+                instance(powerblocks.water, {
+                    x: 1715,
+                    y: 340
                 })
             ],
             elements: [
