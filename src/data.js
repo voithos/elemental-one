@@ -1,3 +1,8 @@
+var acquirePowergem = function(player, item) {
+    player.powergem = item;
+    player.element = item.element;
+};
+
 var elements = {
     air: {
         type: 'air',
@@ -97,7 +102,8 @@ var powergems = {
     air: {
         itemType: 'powergem',
         itemProps: {
-            element: 'air'
+            element: 'air',
+            acquire: acquirePowergem
         },
         frameName: 'gemYellow.png',
         body: {
@@ -110,7 +116,8 @@ var powergems = {
     water: {
         itemType: 'powergem',
         itemProps: {
-            element: 'water'
+            element: 'water',
+            acquire: acquirePowergem
         },
         frameName: 'gemBlue.png',
         body: {
@@ -123,7 +130,8 @@ var powergems = {
     earth: {
         itemType: 'powergem',
         itemProps: {
-            element: 'earth'
+            element: 'earth',
+            acquire: acquirePowergem
         },
         frameName: 'gemGreen.png',
         body: {
@@ -136,7 +144,8 @@ var powergems = {
     fire: {
         itemType: 'powergem',
         itemProps: {
-            element: 'fire'
+            element: 'fire',
+            acquire: acquirePowergem
         },
         frameName: 'gemRed.png',
         body: {

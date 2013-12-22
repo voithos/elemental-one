@@ -1,3 +1,4 @@
+var _ = require('./overrides');
 var u = require('./utils');
 var extensions = require('./extensions');
 var cfg = require('./config');
@@ -33,7 +34,7 @@ function preload() {
 var map, tileset, surface, background,
     player, clouds, items,
     elemEmitters = {},
-    cursors, elemButton;
+    cursors, elemButton, acquireButton;
 
 function create() {
     game.stage.backgroundColor = cfg.BACKGROUND;
@@ -79,6 +80,7 @@ function create() {
 
     cursors = game.input.keyboard.createCursorKeys();
     elemButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    acquireButton = game.input.keyboard.addKey(Phaser.Keyboard.Z);
 }
 
 function createClouds() {
@@ -109,7 +111,7 @@ function createItems() {
         i.animations.add('item', [item.frameName], 1, false, false);
         i.animations.play('item');
 
-        i.body.gravity.y = cfg.GRAVITY;
+        i.body.gravity.y = cfg.ITEM_GRAVITY;
         i.body.collideWorldBounds = true;
 
         if (item.body) {
@@ -192,6 +194,7 @@ function update() {
         });
     }
 
+
     // Reset player movement if touching ground
     // Otherwise, mark as airborne (when player hasn't jumped, but falls)
     if (player.body.touching.down) {
@@ -229,17 +232,6 @@ function update() {
         if (player.facing !== 'down') {
             if (!player.airborne) {
                 player.animations.play('duck');
-
-                // Detect item acquisition
-                if (!player.element) {
-                    game.physics.overlap(player, items, function(player, item) {
-                        if (item.itemType === 'powergem') {
-                            player.powergem = item;
-                            player.element = item.element;
-                            item.kill();
-                        }
-                    });
-                }
             }
             player.facing = 'down';
         }
@@ -256,6 +248,39 @@ function update() {
         player.animations.play('jump');
         player.airborne = true;
     }
+
+
+    // Detect item acquisition
+    if (acquireButton.isDown) {
+        game.physics.overlap(player, items, function(player, item) {
+            if (item.acquire) {
+                item.acquire(player, item);
+            }
+            item.isBeingAcquired = true;
+            item.lifespan = cfg.ITEM_FADE_TIME;
+        }, function(player, item) {
+            if (item.isBeingAcquired) {
+                return false;
+            }
+            if (item.checkAcquirable) {
+                return item.checkAcquirable(player, item);
+            }
+            return true;
+        });
+    }
+
+    // Item fading
+    items.forEachAlive(function(i) {
+        if (i.isBeingAcquired) {
+            // Fade with quadratic easing
+            var t = (cfg.ITEM_FADE_TIME - i.lifespan) / cfg.ITEM_FADE_TIME;
+            i.alpha = -1 * t * t + 1;
+
+            // Move toward player
+            game.physics.moveToXY(i, player.body.x, player.body.y + cfg.ITEM_ACQUIRE_OFFSET, null, i.lifespan);
+        }
+    });
+
 
     // Elemental emission
     if (emitter) {
@@ -301,4 +326,5 @@ function render() {
     // game.debug.renderSpriteBody(player);
     // game.debug.renderSpriteBody(items.getAt(0));
     // game.debug.renderSpriteInfo(player, 150, 150);
+    // game.debug.renderSpriteInfo(items.getAt(0), 450, 150);
 }
