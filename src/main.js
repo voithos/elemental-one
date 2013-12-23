@@ -146,6 +146,7 @@ function createLevelElements(elems, group, type) {
 function createEmitters() {
     data.levels.level1.elements.forEach(function(elem) {
         var emitter = game.add.emitter(0, 0, cfg.MAX_PARTICLES);
+        emitter.element = elem.element;
         emitter.makeParticles('particles', [elem.frameName], elem.num, true, true);
 
         emitter.gravity = elem.gravity || emitter.gravity;
@@ -165,7 +166,7 @@ function createEmitters() {
             emitter.setYSpeed(elem.speedY.min, elem.speedY.max);
         }
 
-        elemEmitters[elem.type] = emitter;
+        elemEmitters[elem.element] = emitter;
     });
 }
 
@@ -201,8 +202,26 @@ function update() {
     game.physics.collide(items, surface);
     game.physics.collide(blocks, surface);
     game.physics.collide(blocks, blocks);
+
     if (emitter) {
         game.physics.collide(emitter, surface);
+
+        game.physics.overlap(emitter, blocks, function(particle, block) {
+            if (block.collideParticle) {
+                block.collideParticle(particle, block);
+            }
+            block.isDisappearing = true;
+            block.lifespan = cfg.ITEM_FADE_TIME;
+        }, function(particle, block) {
+            if (block.isDisappearing) {
+                return false;
+            }
+            if (block.checkCollideParticle) {
+                console.log(block.checkCollideParticle(particle, block));
+                return block.checkCollideParticle(particle, block);
+            }
+            return false;
+        });
 
         // Fade out particles as time goes on
         emitter.forEachAlive(function(p) {
@@ -281,7 +300,7 @@ function update() {
             if (item.checkAcquirable) {
                 return item.checkAcquirable(player, item);
             }
-            return true;
+            return false;
         });
     }
 
@@ -294,6 +313,13 @@ function update() {
 
             // Move toward player
             game.physics.moveToXY(i, player.body.x, player.body.y + cfg.ITEM_ACQUIRE_OFFSET, null, i.lifespan);
+        }
+    });
+
+    // Block fading
+    blocks.forEachAlive(function(b) {
+        if (b.isDisappearing) {
+            b.alpha = b.lifespan / cfg.BLOCK_FADE_TIME;
         }
     });
 

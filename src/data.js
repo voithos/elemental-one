@@ -4,14 +4,25 @@ var instance = function() {
     return Phaser.Utils.extend.apply(null, args);
 };
 
+/**
+ * Item methods
+ */
 var acquirePowergem = function(player, item) {
     player.powergem = item;
     player.element = item.element;
 };
 
+var checkAcquirablePowergem = function(player, item) {
+    return !player.element;
+};
+
+var checkCollideParticlePowerblock = function(particle, block) {
+    return particle.group.element === block.element;
+};
+
 var elements = {
     air: {
-        type: 'air',
+        element: 'air',
         frameName: 'air.png',
         num: 200,
         gravity: 0.1,
@@ -34,7 +45,7 @@ var elements = {
         }
     },
     water: {
-        type: 'water',
+        element: 'water',
         frameName: 'water.png',
         num: 200,
         gravity: 6,
@@ -57,7 +68,7 @@ var elements = {
         }
     },
     earth: {
-        type: 'earth',
+        element: 'earth',
         frameName: 'earth.png',
         num: 200,
         gravity: 2,
@@ -80,7 +91,7 @@ var elements = {
         }
     },
     fire: {
-        type: 'fire',
+        element: 'fire',
         frameName: 'fire.png',
         num: 200,
         gravity: -5,
@@ -109,7 +120,8 @@ var powergems = {
         elemType: 'powergem',
         props: {
             element: 'air',
-            acquire: acquirePowergem
+            acquire: acquirePowergem,
+            checkAcquirable: checkAcquirablePowergem
         },
         frameName: 'gemYellow.png',
         body: {
@@ -123,7 +135,8 @@ var powergems = {
         elemType: 'powergem',
         props: {
             element: 'water',
-            acquire: acquirePowergem
+            acquire: acquirePowergem,
+            checkAcquirable: checkAcquirablePowergem
         },
         frameName: 'gemBlue.png',
         body: {
@@ -137,7 +150,8 @@ var powergems = {
         elemType: 'powergem',
         props: {
             element: 'earth',
-            acquire: acquirePowergem
+            acquire: acquirePowergem,
+            checkAcquirable: checkAcquirablePowergem
         },
         frameName: 'gemGreen.png',
         body: {
@@ -151,7 +165,8 @@ var powergems = {
         elemType: 'powergem',
         props: {
             element: 'fire',
-            acquire: acquirePowergem
+            acquire: acquirePowergem,
+            checkAcquirable: checkAcquirablePowergem
         },
         frameName: 'gemRed.png',
         body: {
@@ -167,7 +182,8 @@ var powerblocks = {
     air: {
         elemType: 'powerblock',
         props: {
-            element: 'air'
+            element: 'air',
+            checkCollideParticle: checkCollideParticlePowerblock
         },
         frameId: 54,
         body: {
@@ -180,7 +196,8 @@ var powerblocks = {
     water: {
         elemType: 'powerblock',
         props: {
-            element: 'water'
+            element: 'water',
+            checkCollideParticle: checkCollideParticlePowerblock
         },
         frameId: 90,
         body: {
@@ -193,7 +210,8 @@ var powerblocks = {
     earth: {
         elemType: 'powerblock',
         props: {
-            element: 'earth'
+            element: 'earth',
+            checkCollideParticle: checkCollideParticlePowerblock
         },
         frameId: 97,
         body: {
@@ -206,7 +224,8 @@ var powerblocks = {
     fire: {
         elemType: 'powerblock',
         props: {
-            element: 'fire'
+            element: 'fire',
+            checkCollideParticle: checkCollideParticlePowerblock
         },
         frameId: 66,
         body: {
@@ -228,8 +247,8 @@ module.exports = {
             height: 840,
             clouds: 15,
             player: {
-                x: 1550,
-                y: 380
+                x: 150,
+                y: 580
             },
             items: [
                 instance(powergems.water, {
@@ -240,15 +259,15 @@ module.exports = {
             blocks: [
                 instance(powerblocks.water, {
                     x: 1715,
-                    y: 480
+                    y: 450
                 }),
                 instance(powerblocks.water, {
                     x: 1715,
-                    y: 410
+                    y: 350
                 }),
                 instance(powerblocks.water, {
                     x: 1715,
-                    y: 340
+                    y: 250
                 })
             ],
             elements: [

@@ -22,6 +22,8 @@ module.exports = {
     ITEM_FADE_TIME: 1000,
     ITEM_ACQUIRE_OFFSET: 25,
 
+    BLOCK_FADE_TIME: 1000,
+
     /**
      * Asset settings
      */
