@@ -25,7 +25,7 @@ if (typeof Phaser !== 'undefined') {
             //  Moving left
             this._overlap = tile.right - body.hullX.x;
 
-            if ((this._overlap > this._maxOverlap && !tile.tile.disableMaxOverlapCheck) || body.allowCollision.left === false || tile.tile.collideRight === false)
+            if ((tile.tile.enableMaxOverlapCheck && this._overlap > this._maxOverlap) || body.allowCollision.left === false || tile.tile.collideRight === false)
             // if (body.allowCollision.left === false || tile.tile.collideRight === false)
             {
                 this._overlap = 0;
@@ -40,7 +40,7 @@ if (typeof Phaser !== 'undefined') {
             //  Moving right
             this._overlap = body.hullX.right - tile.x;
 
-            if ((this._overlap > this._maxOverlap && !tile.tile.disableMaxOverlapCheck) || body.allowCollision.right === false || tile.tile.collideLeft === false)
+            if ((tile.tile.enableMaxOverlapCheck && this._overlap > this._maxOverlap) || body.allowCollision.right === false || tile.tile.collideLeft === false)
             // if (body.allowCollision.right === false || tile.tile.collideLeft === false)
             {
                 this._overlap = 0;
@@ -104,7 +104,7 @@ if (typeof Phaser !== 'undefined') {
             //  Moving up
             this._overlap = tile.bottom - body.hullY.y;
 
-            if ((this._overlap > this._maxOverlap && !tile.tile.disableMaxOverlapCheck) || body.allowCollision.up === false || tile.tile.collideDown === false)
+            if ((tile.tile.enableMaxOverlapCheck && this._overlap > this._maxOverlap) || body.allowCollision.up === false || tile.tile.collideDown === false)
             // if (body.allowCollision.up === false || tile.tile.collideDown === false)
             {
                 this._overlap = 0;
@@ -119,7 +119,7 @@ if (typeof Phaser !== 'undefined') {
             //  Moving down
             this._overlap = body.hullY.bottom - tile.y;
 
-            if ((this._overlap > this._maxOverlap && !tile.tile.disableMaxOverlapCheck) || body.allowCollision.down === false || tile.tile.collideUp === false)
+            if ((tile.tile.enableMaxOverlapCheck && this._overlap > this._maxOverlap) || body.allowCollision.down === false || tile.tile.collideUp === false)
             // if (body.allowCollision.down === false || tile.tile.collideUp === false)
             {
                 this._overlap = 0;

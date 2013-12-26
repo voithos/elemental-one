@@ -50,17 +50,17 @@ function create() {
     cfg.FLOATING_TILES.forEach(function(tile) {
         var t = tileset.getTile(tile);
         t.setCollision(false, false, true, false);
-        t.disableMaxOverlapCheck = false;
+        t.enableMaxOverlapCheck = true;
     });
     cfg.UPWARD_SLOPE_TILES.forEach(function(tile) {
         var t = tileset.getTile(tile);
         t.setCollision(false, false, true, false);
-        t.disableMaxOverlapCheck = true;
+        t.enableMaxOverlapCheck = false;
     });
     cfg.DOWNWARD_SLOPE_TILES.forEach(function(tile) {
         var t = tileset.getTile(tile);
         t.setCollision(false, false, true, false);
-        t.disableMaxOverlapCheck = true;
+        t.enableMaxOverlapCheck = false;
     });
     cfg.BACKGROUND_TILES.forEach(function(tile) {
         tileset.setCollision(tile, false, false, false, false);
