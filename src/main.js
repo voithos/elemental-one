@@ -35,7 +35,7 @@ function preload() {
 var map, tileset, surface, background,
     player, clouds, items, blocks,
     elemEmitters = {},
-    cursors, elemButton, acquireButton;
+    cursors, elemButton, acquireButton, dropButton;
 
 function create() {
     game.stage.backgroundColor = cfg.BACKGROUND;
@@ -83,6 +83,7 @@ function create() {
     cursors = game.input.keyboard.createCursorKeys();
     elemButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     acquireButton = game.input.keyboard.addKey(Phaser.Keyboard.Z);
+    dropButton = game.input.keyboard.addKey(Phaser.Keyboard.X);
 }
 
 function createClouds() {
@@ -217,7 +218,6 @@ function update() {
                 return false;
             }
             if (block.checkCollideParticle) {
-                console.log(block.checkCollideParticle(particle, block));
                 return block.checkCollideParticle(particle, block);
             }
             return false;
@@ -288,6 +288,7 @@ function update() {
     // Detect item acquisition
     if (acquireButton.isDown) {
         game.physics.overlap(player, items, function(player, item) {
+            player.currentItem = item;
             if (item.acquire) {
                 item.acquire(player, item);
             }
@@ -302,6 +303,20 @@ function update() {
             }
             return false;
         });
+    }
+
+    if (dropButton.isDown && player.currentItem && player.currentItem.lifespan <= 0) {
+        player.currentItem.revive();
+        player.currentItem.isBeingAcquired = false;
+        player.currentItem.alpha = 1;
+        player.currentItem.body.x = player.body.x;
+        player.currentItem.body.y = player.body.y + cfg.ITEM_ACQUIRE_OFFSET;
+        player.currentItem.body.velocity.setTo(0, cfg.ITEM_DROP_VEL);
+
+        if (player.currentItem.drop) {
+            player.currentItem.drop(player, player.currentItem);
+        }
+        player.currentItem = null;
     }
 
     // Item fading

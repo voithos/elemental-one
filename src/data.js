@@ -12,6 +12,11 @@ var acquirePowergem = function(player, item) {
     player.element = item.element;
 };
 
+var dropPowergem = function(player, item) {
+    player.powergem = null;
+    player.element = null;
+};
+
 var checkAcquirablePowergem = function(player, item) {
     return !player.element;
 };
@@ -121,6 +126,7 @@ var powergems = {
         props: {
             element: 'air',
             acquire: acquirePowergem,
+            drop: dropPowergem,
             checkAcquirable: checkAcquirablePowergem
         },
         frameName: 'gemYellow.png',
@@ -136,6 +142,7 @@ var powergems = {
         props: {
             element: 'water',
             acquire: acquirePowergem,
+            drop: dropPowergem,
             checkAcquirable: checkAcquirablePowergem
         },
         frameName: 'gemBlue.png',
@@ -151,6 +158,7 @@ var powergems = {
         props: {
             element: 'earth',
             acquire: acquirePowergem,
+            drop: dropPowergem,
             checkAcquirable: checkAcquirablePowergem
         },
         frameName: 'gemGreen.png',
@@ -166,6 +174,7 @@ var powergems = {
         props: {
             element: 'fire',
             acquire: acquirePowergem,
+            drop: dropPowergem,
             checkAcquirable: checkAcquirablePowergem
         },
         frameName: 'gemRed.png',
