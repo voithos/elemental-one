@@ -14,6 +14,15 @@ var game = new Phaser.Game(cfg.GAME_WIDTH, cfg.GAME_HEIGHT, Phaser.CANVAS, '', {
     render: render
 });
 
+Phaser.Utils.extend(game, {
+    level: 'level2',
+    levelNum: 1,
+    setLevel: function(l) {
+        this.levelNum = l;
+        this.level = 'level' + l;
+    }
+});
+
 function preload() {
     /**
      * Custom configuration
@@ -23,6 +32,7 @@ function preload() {
         cfg.DOWNWARD_SLOPE_TILES);
 
     game.load.tilemap('level1', 'assets/tilemaps/level1.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('level2', 'assets/tilemaps/level2.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tileset('tiles', 'assets/tilesets/tiles_spritesheet.png', cfg.TILE_WIDTH, cfg.TILE_HEIGHT);
 
     game.load.atlas('p1', 'assets/sprites/p1_spritesheet.png', 'assets/sprites/p1_spritesheet.json');
@@ -33,14 +43,14 @@ function preload() {
 }
 
 var map, tileset, surface, background,
-    player, clouds, items, blocks,
+    player, clouds, items, backgroundItems, blocks,
     elemEmitters = {},
     cursors, elemButton, acquireButton, dropButton;
 
 function create() {
     game.stage.backgroundColor = cfg.BACKGROUND;
 
-    map = game.add.tilemap('level1');
+    map = game.add.tilemap(game.level);
     tileset = game.add.tileset('tiles');
 
     // Set tiles to collide on all four sides
@@ -74,6 +84,7 @@ function create() {
     surface.resizeWorld();
 
     createBlocks();
+    createBackgroundItems();
     addPlayer();
     createItems();
     createEmitters();
@@ -87,11 +98,11 @@ function create() {
 }
 
 function createClouds() {
-    if (data.levels.level1.clouds) {
+    if (data.levels[game.level].clouds) {
         clouds = game.add.group();
         u.range(10).forEach(function() {
             var offset = cfg.CLOUD_MOVE_OFFSET * game.rnd.realInRange(0.8, 1.2);
-            var c = clouds.create(game.rnd.integerInRange(0, data.levels.level1.width), game.rnd.integerInRange(0, data.levels.level1.height), 'items');
+            var c = clouds.create(game.rnd.integerInRange(0, data.levels[game.level].width), game.rnd.integerInRange(0, data.levels[game.level].height), 'items');
             c.animations.add('cloud', [game.rnd.pick(['cloud1.png', 'cloud2.png', 'cloud3.png'])], 1, false, false);
             c.animations.play('cloud');
             game.add.tween(c).to({ x: c.x - offset }, cfg.CLOUD_MOVE_TIME, Phaser.Easing.Linear.None)
@@ -105,14 +116,19 @@ function createClouds() {
     }
 }
 
-function createItems() {
-    items = game.add.group();
-    createLevelElements(data.levels.level1.items, items, 'items');
-}
-
 function createBlocks() {
     blocks = game.add.group();
-    createLevelElements(data.levels.level1.blocks, blocks, 'blocks');
+    createLevelElements(data.levels[game.level].blocks, blocks, 'blocks');
+}
+
+function createBackgroundItems() {
+    backgroundItems = game.add.group();
+    createLevelElements(data.levels[game.level].backgroundItems, backgroundItems, 'items');
+}
+
+function createItems() {
+    items = game.add.group();
+    createLevelElements(data.levels[game.level].items, items, 'items');
 }
 
 function createLevelElements(elems, group, type) {
@@ -120,6 +136,7 @@ function createLevelElements(elems, group, type) {
         var e = group.create(el.x, el.y, type, el.frameName || el.frameId);
         e.elemType = el.elemType;
 
+        e.body.allowGravity = !el.noGravity;
         e.body.gravity.y = cfg.ELEM_GRAVITY;
         e.body.collideWorldBounds = true;
 
@@ -139,13 +156,24 @@ function createLevelElements(elems, group, type) {
                 }
             }
         }
+
+        if (el.tween) {
+            var tween = game.add.tween(e);
+            el.tween.forEach(function(t) {
+                tween = tween.to({ x: e.x + t.x, y: e.y + t.y }, t.duration, t.easing);
+            });
+            if (el.tweenLoop) {
+                tween.loop();
+            }
+            tween.start();
+        }
     };
 
     elems.forEach(addLevelElement);
 }
 
 function createEmitters() {
-    data.levels.level1.elements.forEach(function(elem) {
+    data.levels[game.level].elements.forEach(function(elem) {
         var emitter = game.add.emitter(0, 0, cfg.MAX_PARTICLES);
         emitter.element = elem.element;
         emitter.makeParticles('particles', [elem.frameName], elem.num, true, true);
@@ -172,7 +200,7 @@ function createEmitters() {
 }
 
 function addPlayer() {
-    player = game.add.sprite(data.levels.level1.player.x, data.levels.level1.player.y, 'p1');
+    player = game.add.sprite(data.levels[game.level].player.x, data.levels[game.level].player.y, 'p1');
     player.body.collideWorldBounds = true;
     player.body.blockable = true;
     player.body.gravity.y = cfg.GRAVITY;

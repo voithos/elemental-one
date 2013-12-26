@@ -187,6 +187,18 @@ var powergems = {
     }
 };
 
+var backgroundItems = {
+    goalStar: {
+        frameName: 'star.png',
+        noGravity: true,
+        tween: [
+            { x: 0, y: -10, duration: 800, easing: Phaser.Easing.Quadratic.InOut },
+            { x: 0, y: 10, duration: 800, easing: Phaser.Easing.Quadratic.InOut }
+        ],
+        tweenLoop: true
+    }
+};
+
 var powerblocks = {
     air: {
         elemType: 'powerblock',
@@ -247,9 +259,6 @@ var powerblocks = {
 };
 
 module.exports = {
-    state: {
-        level: 'level1'
-    },
     levels: {
         level1: {
             width: 2100,
@@ -263,6 +272,12 @@ module.exports = {
                 instance(powergems.water, {
                     x: 1085,
                     y: 580
+                })
+            ],
+            backgroundItems: [
+                instance(backgroundItems.goalStar, {
+                    x: 1960,
+                    y: 380
                 })
             ],
             blocks: [
@@ -280,9 +295,78 @@ module.exports = {
                 })
             ],
             elements: [
-                elements.air,
+                elements.water
+            ]
+        },
+        level2: {
+            width: 2100,
+            height: 1050,
+            clouds: 15,
+            player: {
+                x: 150,
+                y: 780
+            },
+            items: [
+                instance(powergems.water, {
+                    x: 485,
+                    y: 920
+                }),
+                instance(powergems.fire, {
+                    x: 450,
+                    y: 300
+                }),
+            ],
+            backgroundItems: [
+                instance(backgroundItems.goalStar, {
+                    x: 1960,
+                    y: 590
+                })
+            ],
+            blocks: [
+                // First barrier
+                instance(powerblocks.water, {
+                    x: 815,
+                    y: 850
+                }),
+                instance(powerblocks.water, {
+                    x: 815,
+                    y: 750
+                }),
+                instance(powerblocks.water, {
+                    x: 815,
+                    y: 650
+                }),
+
+                // Second barrier
+                instance(powerblocks.fire, {
+                    x: 1415,
+                    y: 650
+                }),
+                instance(powerblocks.fire, {
+                    x: 1415,
+                    y: 550
+                }),
+                instance(powerblocks.fire, {
+                    x: 1415,
+                    y: 450
+                }),
+
+                // Floating island barrier
+                instance(powerblocks.water, {
+                    x: 600,
+                    y: 300
+                }),
+                instance(powerblocks.water, {
+                    x: 600,
+                    y: 200
+                }),
+                instance(powerblocks.water, {
+                    x: 600,
+                    y: 100
+                })
+            ],
+            elements: [
                 elements.water,
-                elements.earth,
                 elements.fire
             ]
         }
