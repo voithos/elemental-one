@@ -7,21 +7,31 @@ var data = require('./data');
 /**
  * Game code
  */
-var game = new Phaser.Game(cfg.GAME_WIDTH, cfg.GAME_HEIGHT, Phaser.CANVAS, '', {
-    preload: preload,
-    create: create,
-    update: update,
-    render: render
-});
+var game = new Phaser.Game(cfg.GAME_WIDTH, cfg.GAME_HEIGHT, Phaser.CANVAS);
 
-Phaser.Utils.extend(game, {
-    level: 'level2',
-    levelNum: 1,
-    setLevel: function(l) {
-        this.levelNum = l;
-        this.level = 'level' + l;
-    }
-});
+var Main = {};
+
+function boot() {
+    Main.Levels = {};
+    Object.keys(data.levels).forEach(function(level) {
+        Main.Levels[level] = function() {
+        };
+        Main.Levels[level].prototype = {
+            preload: preload,
+            create: function() {
+                game.level = level;
+                game.nextState = data.levels[level].nextState;
+                create();
+            },
+            update: update,
+            render: render
+        };
+
+        game.state.add(level, Main.Levels[level], false);
+    });
+
+    game.state.start('level1');
+}
 
 function preload() {
     /**
@@ -43,7 +53,7 @@ function preload() {
 }
 
 var map, tileset, surface, background,
-    player, clouds, items, backgroundItems, blocks,
+    player, goal, clouds, items, backgroundItems, blocks,
     elemEmitters = {},
     cursors, elemButton, acquireButton, dropButton;
 
@@ -85,6 +95,7 @@ function create() {
 
     createBlocks();
     createBackgroundItems();
+    addGoal();
     addPlayer();
     createItems();
     createEmitters();
@@ -222,10 +233,21 @@ function addPlayer() {
 
 }
 
+function addGoal() {
+    if (data.levels[game.level].goal) {
+        goal = game.add.sprite(data.levels[game.level].goal.x, data.levels[game.level].goal.y, 'blocks', cfg.GOAL_TILE);
+        goal.alpha = 0;
+    }
+}
+
 function update() {
     var emitter = elemEmitters[player.element] || null;
 
     // Collisions
+    game.physics.overlap(player, goal, function() {
+        // Transition to next level (or state)
+        game.state.start(game.nextState);
+    });
     game.physics.collide(player, surface);
     game.physics.collide(player, blocks);
     game.physics.collide(items, surface);
@@ -413,3 +435,5 @@ function render() {
     // game.debug.renderSpriteInfo(player, 150, 150);
     // game.debug.renderSpriteInfo(items.getAt(0), 450, 150);
 }
+
+window.onload = boot;

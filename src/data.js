@@ -261,12 +261,17 @@ var powerblocks = {
 module.exports = {
     levels: {
         level1: {
+            nextState: 'level2',
             width: 2100,
             height: 840,
             clouds: 15,
             player: {
                 x: 150,
                 y: 580
+            },
+            goal: {
+                x: 1961,
+                y: 490
             },
             items: [
                 instance(powergems.water, {
@@ -276,7 +281,7 @@ module.exports = {
             ],
             backgroundItems: [
                 instance(backgroundItems.goalStar, {
-                    x: 1960,
+                    x: 1961,
                     y: 380
                 })
             ],
@@ -305,6 +310,10 @@ module.exports = {
             player: {
                 x: 150,
                 y: 780
+            },
+            goal: {
+                x: 1960,
+                y: 500
             },
             items: [
                 instance(powergems.water, {
