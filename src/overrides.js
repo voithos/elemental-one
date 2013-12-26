@@ -236,16 +236,10 @@ if (typeof Phaser !== 'undefined') {
         if (this.minParticleSpeed.x != this.maxParticleSpeed.x)
         {
             particle.body.velocity.x = this.game.rnd.integerInRange(this.minParticleSpeed.x, this.maxParticleSpeed.x);
-            if (this.flipped) {
-                particle.body.velocity.x *= -1;
-            }
         }
         else
         {
             particle.body.velocity.x = this.minParticleSpeed.x;
-            if (this.flipped) {
-                particle.body.velocity.x *= -1;
-            }
         }
 
         if (this.minParticleSpeed.y != this.maxParticleSpeed.y)
@@ -271,11 +265,13 @@ if (typeof Phaser !== 'undefined') {
         if (this.minParticleScale !== 1 || this.maxParticleScale !== 1)
         {
             var scale = this.game.rnd.realInRange(this.minParticleScale, this.maxParticleScale);
-            if (this.flipped) {
-                particle.scale.setTo(-scale, scale);
-            } else {
-                particle.scale.setTo(scale, scale);
-            }
+            particle.scale.setTo(scale, scale);
+        }
+
+        if (this.flipped) {
+            particle.body.velocity.x *= -1;
+            particle.body.angularVelocity *= -1;
+            particle.scale.x *= -1;
         }
 
         particle.body.drag.x = this.particleDrag.x;
