@@ -65,12 +65,14 @@ function create() {
 
     // Set tiles to collide on all four sides
     tileset.setCollisionRange(0, tileset.total - 1, true, true, true, true);
+    tileset.tiles.forEach(function(t) {
+        t.enableMaxOverlapCheck = true;
+    });
 
     // Set tile collisions
     cfg.FLOATING_TILES.forEach(function(tile) {
         var t = tileset.getTile(tile);
         t.setCollision(false, false, true, false);
-        t.enableMaxOverlapCheck = true;
     });
     cfg.UPWARD_SLOPE_TILES.forEach(function(tile) {
         var t = tileset.getTile(tile);
