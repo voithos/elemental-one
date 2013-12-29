@@ -208,6 +208,11 @@ function createEmitters() {
             emitter.setYSpeed(elem.speedY.min, elem.speedY.max);
         }
 
+        // Make sure that all particles start as "dead"
+        emitter.forEach(function(child) {
+            child.kill();
+        });
+
         elemEmitters[elem.element] = emitter;
     });
 }
@@ -279,6 +284,11 @@ function update() {
         emitter.forEachAlive(function(p) {
             p.alpha = p.lifespan / emitter.lifespan;
         });
+
+        if (player.elementWasDropped && emitter.countLiving() === 0) {
+            player.element = null;
+            player.elementWasDropped = false;
+        }
     }
 
 
@@ -357,6 +367,7 @@ function update() {
         });
     }
 
+    // Detect item drop
     if (dropButton.isDown && player.currentItem && player.currentItem.lifespan <= 0) {
         player.currentItem.revive();
         player.currentItem.isBeingAcquired = false;
@@ -393,7 +404,7 @@ function update() {
 
     // Elemental emission
     if (emitter) {
-        if (elemButton.isDown && player.facing === 'idle' && !player.airborne) {
+        if (player.hasElement && elemButton.isDown && player.facing === 'idle' && !player.airborne) {
 
             // Setup emitter properties if the player is starting to fire
             if (!player.isFiring) {

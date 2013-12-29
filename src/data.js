@@ -10,11 +10,13 @@ var instance = function() {
 var acquirePowergem = function(player, item) {
     player.powergem = item;
     player.element = item.element;
+    player.hasElement = true;
 };
 
 var dropPowergem = function(player, item) {
     player.powergem = null;
-    player.element = null;
+    player.hasElement = false;
+    player.elementWasDropped = true;
 };
 
 var checkAcquirablePowergem = function(player, item) {
