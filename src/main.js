@@ -12,6 +12,14 @@ var game = new Phaser.Game(cfg.GAME_WIDTH, cfg.GAME_HEIGHT, Phaser.CANVAS);
 var Main = {};
 
 function boot() {
+    /**
+     * Custom configuration
+     */
+    game.physics.collideSpriteVsTilemapLayer = extensions.createSlopedTilemapCollider(
+        cfg.UPWARD_SLOPE_TILES,
+        cfg.DOWNWARD_SLOPE_TILES);
+
+
     Main.Levels = {};
     Object.keys(data.levels).forEach(function(level) {
         Main.Levels[level] = function() {
@@ -34,13 +42,6 @@ function boot() {
 }
 
 function preload() {
-    /**
-     * Custom configuration
-     */
-    game.physics.collideSpriteVsTilemapLayer = extensions.createSlopedTilemapCollider(
-        cfg.UPWARD_SLOPE_TILES,
-        cfg.DOWNWARD_SLOPE_TILES);
-
     game.load.tilemap('level1', 'assets/tilemaps/level1.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tilemap('level2', 'assets/tilemaps/level2.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tileset('tiles', 'assets/tilesets/tiles_spritesheet.png', cfg.TILE_WIDTH, cfg.TILE_HEIGHT);
@@ -50,15 +51,24 @@ function preload() {
     game.load.atlasXML('items', 'assets/sprites/items_spritesheet.png', 'assets/sprites/items_spritesheet.xml');
     game.load.spritesheet('blocks', 'assets/tilesets/tiles_spritesheet.png', cfg.TILE_WIDTH, cfg.TILE_HEIGHT);
     game.load.atlasXML('particles', 'assets/sprites/particles.png', 'assets/sprites/particles.xml');
+
+    game.load.audio('jumpsound', 'assets/sounds/jump.wav', true);
+    game.load.audio('pickupsound', 'assets/sounds/pickup.wav', true);
+    game.load.audio('airsound', 'assets/sounds/air.wav', true);
+    game.load.audio('watersound', 'assets/sounds/water.wav', true);
+    game.load.audio('earthsound', 'assets/sounds/earth.wav', true);
+    game.load.audio('firesound', 'assets/sounds/fire.wav', true);
 }
 
 var map, tileset, surface, background,
     player, goal, clouds, items, backgroundItems, blocks,
-    elemEmitters = {},
+    elemEmitters = {}, sfx = {},
     cursors, elemButton, acquireButton, dropButton;
 
 function create() {
     game.stage.backgroundColor = cfg.BACKGROUND;
+
+    createSfx();
 
     map = game.add.tilemap(game.level);
     tileset = game.add.tileset('tiles');
@@ -108,6 +118,16 @@ function create() {
     elemButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     acquireButton = game.input.keyboard.addKey(Phaser.Keyboard.Z);
     dropButton = game.input.keyboard.addKey(Phaser.Keyboard.X);
+}
+
+function createSfx() {
+    // Add sfx
+    ['jumpsound', 'pickupsound'].forEach(function(s) {
+        sfx[s] = game.add.audio(s);
+    });
+    ['airsound', 'watersound', 'earthsound', 'firesound'].forEach(function(s) {
+        sfx[s] = game.add.audio(s, 1, true);
+    });
 }
 
 function createClouds() {
@@ -344,6 +364,7 @@ function update() {
         player.body.velocity.y = -cfg.JUMP_VEL;
         player.animations.play('jump');
         player.airborne = true;
+        sfx.jumpsound.play('', 0, 0.3);
     }
 
 
@@ -356,6 +377,7 @@ function update() {
             }
             item.isBeingAcquired = true;
             item.lifespan = cfg.ITEM_FADE_TIME;
+            sfx.pickupsound.play('', 0.6);
         }, function(player, item) {
             if (item.isBeingAcquired) {
                 return false;
@@ -425,12 +447,20 @@ function update() {
             }
             player.isFiring = true;
 
+            if (!sfx[player.element + 'sound'].isPlaying) {
+                sfx[player.element + 'sound'].play();
+            }
+
             emitter.emitParticle();
         } else {
             if (player.isFiring && player.facing === 'idle' && !player.airborne) {
                 player.animations.play('stand');
             }
             player.isFiring = false;
+
+            if (player.element && sfx[player.element + 'sound'].isPlaying) {
+                sfx[player.element + 'sound'].stop();
+            }
         }
     }
 
