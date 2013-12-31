@@ -38,7 +38,7 @@ function boot() {
         game.state.add(level, Main.Levels[level], false);
     });
 
-    game.state.start('level2');
+    game.state.start('level1');
 }
 
 function preload() {

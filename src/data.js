@@ -369,7 +369,7 @@ module.exports = {
                     x: 485,
                     y: 920
                 }),
-                instance(powergems.fire, {
+                instance(powergems.earth, {
                     x: 450,
                     y: 300
                 }),
@@ -396,15 +396,15 @@ module.exports = {
                 }),
 
                 // Second barrier
-                instance(powerblocks.fire, {
+                instance(powerblocks.earth, {
                     x: 1415,
                     y: 650
                 }),
-                instance(powerblocks.fire, {
+                instance(powerblocks.earth, {
                     x: 1415,
                     y: 550
                 }),
-                instance(powerblocks.fire, {
+                instance(powerblocks.earth, {
                     x: 1415,
                     y: 450
                 }),
@@ -425,7 +425,7 @@ module.exports = {
             ],
             elements: [
                 elements.water,
-                elements.fire
+                elements.earth
             ]
         }
     }
