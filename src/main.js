@@ -52,6 +52,8 @@ function preload() {
     game.load.spritesheet('blocks', 'assets/tilesets/tiles_spritesheet.png', cfg.TILE_WIDTH, cfg.TILE_HEIGHT);
     game.load.atlasXML('particles', 'assets/sprites/particles.png', 'assets/sprites/particles.xml');
 
+    game.load.audio('theme', ['assets/sounds/happy.mp3', 'assets/sounds/happy.ogg'], true);
+
     game.load.audio('jumpsound', 'assets/sounds/jump.wav', true);
     game.load.audio('pickupsound', 'assets/sounds/pickup.wav', true);
     game.load.audio('airsound', 'assets/sounds/air.wav', true);
@@ -61,14 +63,14 @@ function preload() {
 }
 
 var map, tileset, surface, background,
-    player, goal, clouds, items, backgroundItems, blocks,
-    elemEmitters = {}, sfx = {},
+    player, goal, clouds, items, backgroundItems, blocks, theme,
+    sfx = {}, elemEmitters = {},
     cursors, elemButton, acquireButton, dropButton;
 
 function create() {
     game.stage.backgroundColor = cfg.BACKGROUND;
 
-    createSfx();
+    createAudio();
 
     map = game.add.tilemap(game.level);
     tileset = game.add.tileset('tiles');
@@ -118,9 +120,19 @@ function create() {
     elemButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     acquireButton = game.input.keyboard.addKey(Phaser.Keyboard.Z);
     dropButton = game.input.keyboard.addKey(Phaser.Keyboard.X);
+
+    if (!theme.isPlaying) {
+        theme.play('', 0, 0.6, true);
+    }
 }
 
-function createSfx() {
+function createAudio() {
+    // Avoid recreating the music
+    if (theme) {
+        return;
+    }
+    theme = game.add.audio('theme');
+
     // Add sfx
     ['jumpsound', 'pickupsound'].forEach(function(s) {
         sfx[s] = game.add.audio(s);
