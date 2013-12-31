@@ -10,3 +10,4 @@ Organized by asset:
 - `assets/sounds/earth.wav` made by `qubodup`, taken from OpenGameArt
 - `assets/sounds/fire.wav` made by `p0ss`, taken from OpenGameArt
 - `assets/sounds/pickup.wav` made by `p0ss`, taken from OpenGameArt
+- `assets/fonts/minecraftia-webfont.*` made by `Andrew Tyler`, from `http://www.andrewtyler.net/`

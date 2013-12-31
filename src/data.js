@@ -27,6 +27,14 @@ var checkCollideParticlePowerblock = function(particle, block) {
     return particle.group.element === block.element;
 };
 
+var font = {
+    style: {
+        font: '18px "minecraftiaregular"',
+        fill: 'slategray',
+        align: 'center'
+    }
+};
+
 var elements = {
     air: {
         element: 'air',
@@ -275,6 +283,23 @@ module.exports = {
                 x: 1961,
                 y: 490
             },
+            text: [
+                instance(font, {
+                    x: 350,
+                    y: 350,
+                    msg: 'Hi! :D\nUse the arrow keys to move and jump about.\nTry to make it to the level exit!'
+                }),
+                instance(font, {
+                    x: 1000,
+                    y: 725,
+                    msg: 'Grab a powergem with the "Z" key.\nThen use the spacebar to unleash your element!'
+                }),
+                instance(font, {
+                    x: 1600,
+                    y: 275,
+                    msg: 'Use your power to remove obstacles.\nEach obstacle type matches one of your elements.'
+                })
+            ],
             items: [
                 instance(powergems.water, {
                     x: 1085,
@@ -317,6 +342,28 @@ module.exports = {
                 x: 1960,
                 y: 500
             },
+            text: [
+                instance(font, {
+                    x: 250,
+                    y: 650,
+                    msg: 'Keep going!'
+                }),
+                instance(font, {
+                    x: 1000,
+                    y: 300,
+                    msg: 'There are 4 types\nof powergems, but you\ncan only carry one at a time!'
+                }),
+                instance(font, {
+                    x: 375,
+                    y: 240,
+                    msg: 'Use the "X" key to drop\nyour current powergem.\nThen, you can pick up a new one!'
+                }),
+                instance(font, {
+                    x: 1800,
+                    y: 550,
+                    msg: 'From here on out,\nyou\'re on your own. :)'
+                })
+            ],
             items: [
                 instance(powergems.water, {
                     x: 485,

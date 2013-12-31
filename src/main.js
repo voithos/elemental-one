@@ -7,7 +7,7 @@ var data = require('./data');
 /**
  * Game code
  */
-var game = new Phaser.Game(cfg.GAME_WIDTH, cfg.GAME_HEIGHT, Phaser.CANVAS);
+var game = window.game = new Phaser.Game(cfg.GAME_WIDTH, cfg.GAME_HEIGHT, Phaser.CANVAS);
 
 var Main = {};
 
@@ -38,7 +38,7 @@ function boot() {
         game.state.add(level, Main.Levels[level], false);
     });
 
-    game.state.start('level1');
+    game.state.start('level2');
 }
 
 function preload() {
@@ -109,6 +109,7 @@ function create() {
 
     createBlocks();
     createBackgroundItems();
+    createHelpText();
     addGoal();
     addPlayer();
     createItems();
@@ -169,6 +170,15 @@ function createBlocks() {
 function createBackgroundItems() {
     backgroundItems = game.add.group();
     createLevelElements(data.levels[game.level].backgroundItems, backgroundItems, 'items');
+}
+
+function createHelpText() {
+    if (data.levels[game.level].text) {
+        data.levels[game.level].text.forEach(function(text) {
+            var t = game.add.text(text.x, text.y, text.msg, text.style);
+            t.anchor.setTo(0.5, 0.5);
+        });
+    }
 }
 
 function createItems() {

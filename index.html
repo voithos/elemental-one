@@ -3,8 +3,22 @@
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <title>Elemental One</title>
+        <style>
+            @font-face {
+                font-family: 'minecraftiaregular';
+                src: url('assets/fonts/minecraftia-webfont.eot');
+                src: url('assets/fonts/minecraftia-webfont.eot?#iefix') format('embedded-opentype'),
+                     url('assets/fonts/minecraftia-webfont.woff') format('woff'),
+                     url('assets/fonts/minecraftia-webfont.ttf') format('truetype'),
+                     url('assets/fonts/minecraftia-webfont.svg#minecraftiaregular') format('svg');
+                font-weight: normal;
+                font-style: normal;
+            }
+        </style>
     </head>
     <body>
+        <!-- Hack to get the browser to download the font immediately -->
+        <span style="font-family: minecraftiaregular; visibility: hidden; position: absolute; top: -100px;">.</span>
         <script src="deps/phaser.js" type="text/javascript" charset="utf-8"></script>
         <script src="build/all.js" type="text/javascript" charset="utf-8"></script>
     </body>
