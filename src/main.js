@@ -129,7 +129,7 @@ function create() {
     dropButton = game.input.keyboard.addKey(Phaser.Keyboard.X);
 
     if (!theme.isPlaying) {
-        theme.play('', 0, 0.6, true);
+        theme.play('', 0, 0.3, true);
     }
 }
 

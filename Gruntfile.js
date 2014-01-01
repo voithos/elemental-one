@@ -41,7 +41,7 @@
             },
             open: {
                 dev: {
-                    path: 'http://localhost:8008'
+                    path: 'http://localhost:8008/index.dev.html'
                 }
             },
             uglify: {

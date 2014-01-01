@@ -568,7 +568,7 @@
             acquireButton = game.input.keyboard.addKey(Phaser.Keyboard.Z);
             dropButton = game.input.keyboard.addKey(Phaser.Keyboard.X);
             if (!theme.isPlaying) {
-                theme.play("", 0, .6, true);
+                theme.play("", 0, .3, true);
             }
         }
         function createAudio() {
