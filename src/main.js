@@ -11,6 +11,11 @@ var game = window.game = new Phaser.Game(cfg.GAME_WIDTH, cfg.GAME_HEIGHT, Phaser
 
 var Main = {};
 
+var loaded, map, tileset, surface, background,
+    player, goal, clouds, items, backgroundItems, blocks, theme,
+    sfx = {}, elemEmitters = {},
+    cursors, elemButton, acquireButton, dropButton;
+
 function boot() {
     /**
      * Custom configuration
@@ -42,6 +47,10 @@ function boot() {
 }
 
 function preload() {
+    if (loaded) {
+        return;
+    }
+
     game.load.tilemap('level1', 'assets/tilemaps/level1.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tilemap('level2', 'assets/tilemaps/level2.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tileset('tiles', 'assets/tilesets/tiles_spritesheet.png', cfg.TILE_WIDTH, cfg.TILE_HEIGHT);
@@ -60,12 +69,9 @@ function preload() {
     game.load.audio('watersound', 'assets/sounds/water.wav', true);
     game.load.audio('earthsound', 'assets/sounds/earth.wav', true);
     game.load.audio('firesound', 'assets/sounds/fire.wav', true);
-}
 
-var map, tileset, surface, background,
-    player, goal, clouds, items, backgroundItems, blocks, theme,
-    sfx = {}, elemEmitters = {},
-    cursors, elemButton, acquireButton, dropButton;
+    loaded = true;
+}
 
 function create() {
     game.stage.backgroundColor = cfg.BACKGROUND;
