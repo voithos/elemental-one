@@ -1,18 +1,19 @@
 {
-    "name": "element-of-one",
-    "version": "0.0.1",
+    "name": "elemental-one",
+    "version": "0.1.0",
     "author": "Zaven Muradyan <megalivoithos@gmail.com>",
     "description": "You Only Get One Element",
     "contributors": [{
         "name": "Zaven Muradyan",
         "email": "megalivoithos@gmail.com"
     }],
-    "main": "",
     "repository": {
         "type": "git",
-        "url": ""
+        "url": "https://github.com/voithos/elemental-one.git"
     },
     "keywords": [
+        "game",
+        "phaser"
     ],
     "devDependencies": {
         "grunt": "~0.4.1",
