@@ -293,7 +293,12 @@ module.exports = {
                 instance(font, {
                     x: 1000,
                     y: 725,
-                    msg: 'Grab a powergem with the "Z" key.\nThen use the spacebar to unleash your element!'
+                    msg: 'Grab a powergem with the "Z" key.\nThen use the spacebar to unleash your element!',
+                    style: {
+                        font: '18px "minecraftiaregular"',
+                        fill: '#2c2c2c',
+                        align: 'center'
+                    }
                 }),
                 instance(font, {
                     x: 1600,
