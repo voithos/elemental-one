@@ -26,6 +26,9 @@ module.exports = {
 
     BLOCK_FADE_TIME: 1000,
 
+    LEVEL_FADEIN_TIME: 1000,
+    LEVEL_FADEOUT_TIME: 500,
+
     /**
      * Asset settings
      */

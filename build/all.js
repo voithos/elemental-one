@@ -41,6 +41,8 @@
             ITEM_ACQUIRE_OFFSET: 25,
             ITEM_DROP_VEL: -100,
             BLOCK_FADE_TIME: 1e3,
+            LEVEL_FADEIN_TIME: 1e3,
+            LEVEL_FADEOUT_TIME: 500,
             PLAYER_BOUND_WIDTH: 30,
             PLAYER_BOUND_HEIGHT: 75,
             PLAYER_BOUND_H_OFFSET: 10,
@@ -492,7 +494,7 @@
         var data = require("./data");
         var game = new Phaser.Game(cfg.GAME_WIDTH, cfg.GAME_HEIGHT, Phaser.CANVAS, cfg.DOM_PARENT);
         var Main = {};
-        var preloadbar, loaded, menubackground, logo, map, tileset, surface, background, player, goal, clouds, items, backgroundItems, blocks, theme, musicdone, sfx = {}, elemEmitters = {}, cursors, elemButton, acquireButton, dropButton;
+        var preloadbar, loaded, menubackground, logo, occluder, map, tileset, surface, background, player, goal, clouds, items, backgroundItems, blocks, theme, musicdone, transitioning, gotoNext, sfx = {}, elemEmitters = {}, cursors, elemButton, acquireButton, dropButton;
         function boot() {
             game.physics.collideSpriteVsTilemapLayer = extensions.createSlopedTilemapCollider(cfg.UPWARD_SLOPE_TILES, cfg.DOWNWARD_SLOPE_TILES);
             game.input.maxPointers = 1;
@@ -520,7 +522,7 @@
                     var tween = game.add.tween(preloadbar).to({
                         alpha: 0
                     }, 800, Phaser.Easing.Linear.None, true);
-                    tween.onComplete.add(function() {
+                    tween.onComplete.addOnce(function() {
                         game.state.start("mainmenu");
                     });
                 }
@@ -559,7 +561,7 @@
                         var tween = game.add.tween(menubackground).to({
                             alpha: 0
                         }, 2e3, Phaser.Easing.Linear.None, true);
-                        tween.onComplete.add(function() {
+                        tween.onComplete.addOnce(function() {
                             game.state.start("level1");
                         });
                     });
@@ -587,6 +589,7 @@
                 return;
             }
             game.load.image("menubackground", "assets/images/menubackground.png");
+            game.load.image("occluder", "assets/images/occluder.png");
             game.load.tilemap("level1", "assets/tilemaps/level1.json", null, Phaser.Tilemap.TILED_JSON);
             game.load.tilemap("level2", "assets/tilemaps/level2.json", null, Phaser.Tilemap.TILED_JSON);
             game.load.tileset("tiles", "assets/tilesets/tiles_spritesheet.png", cfg.TILE_WIDTH, cfg.TILE_HEIGHT);
@@ -640,11 +643,18 @@
             addPlayer();
             createItems();
             createEmitters();
+            occluder = game.add.sprite(player.x, player.y, "occluder");
+            occluder.anchor.setTo(.5, .5);
+            occluder.scale.setTo(10, 10);
+            game.add.tween(occluder).to({
+                alpha: 0
+            }, cfg.LEVEL_FADEIN_TIME, Phaser.Easing.Linear.None, true);
             game.camera.follow(player, Phaser.Camera.FOLLOW_PLATFORMER);
             cursors = game.input.keyboard.createCursorKeys();
             elemButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
             acquireButton = game.input.keyboard.addKey(Phaser.Keyboard.Z);
             dropButton = game.input.keyboard.addKey(Phaser.Keyboard.X);
+            transitioning = false;
         }
         function createAudio() {
             if (musicdone) {
@@ -786,9 +796,23 @@
             }
         }
         function update() {
+            if (gotoNext) {
+                gotoNext = false;
+                game.state.start(game.nextState);
+            }
             var emitter = elemEmitters[player.element] || null;
             game.physics.overlap(player, goal, function() {
-                game.state.start(game.nextState);
+                if (!transitioning) {
+                    transitioning = true;
+                    occluder.x = player.x;
+                    occluder.y = player.y;
+                    var tween = game.add.tween(occluder).to({
+                        alpha: 1
+                    }, cfg.LEVEL_FADEOUT_TIME, Phaser.Easing.Linear.None, true);
+                    tween.onComplete.addOnce(function() {
+                        gotoNext = true;
+                    });
+                }
             });
             game.physics.collide(player, surface);
             game.physics.collide(player, blocks);
