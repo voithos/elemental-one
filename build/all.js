@@ -366,9 +366,6 @@
                     }), instance(powerblocks.water, {
                         x: 1715,
                         y: 350
-                    }), instance(powerblocks.water, {
-                        x: 1715,
-                        y: 250
                     }) ],
                     elements: [ elements.water ]
                 },
@@ -419,27 +416,18 @@
                     }), instance(powerblocks.water, {
                         x: 815,
                         y: 750
-                    }), instance(powerblocks.water, {
-                        x: 815,
-                        y: 650
                     }), instance(powerblocks.earth, {
                         x: 1415,
                         y: 650
                     }), instance(powerblocks.earth, {
                         x: 1415,
                         y: 550
-                    }), instance(powerblocks.earth, {
-                        x: 1415,
-                        y: 450
                     }), instance(powerblocks.water, {
                         x: 600,
                         y: 300
                     }), instance(powerblocks.water, {
                         x: 600,
                         y: 200
-                    }), instance(powerblocks.water, {
-                        x: 600,
-                        y: 100
                     }) ],
                     elements: [ elements.water, elements.earth ]
                 }

@@ -326,10 +326,6 @@ module.exports = {
                 instance(powerblocks.water, {
                     x: 1715,
                     y: 350
-                }),
-                instance(powerblocks.water, {
-                    x: 1715,
-                    y: 250
                 })
             ],
             elements: [
@@ -397,10 +393,6 @@ module.exports = {
                     x: 815,
                     y: 750
                 }),
-                instance(powerblocks.water, {
-                    x: 815,
-                    y: 650
-                }),
 
                 // Second barrier
                 instance(powerblocks.earth, {
@@ -411,10 +403,6 @@ module.exports = {
                     x: 1415,
                     y: 550
                 }),
-                instance(powerblocks.earth, {
-                    x: 1415,
-                    y: 450
-                }),
 
                 // Floating island barrier
                 instance(powerblocks.water, {
@@ -424,10 +412,6 @@ module.exports = {
                 instance(powerblocks.water, {
                     x: 600,
                     y: 200
-                }),
-                instance(powerblocks.water, {
-                    x: 600,
-                    y: 100
                 })
             ],
             elements: [
