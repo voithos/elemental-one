@@ -274,6 +274,7 @@ module.exports = {
             nextState: 'level2',
             width: 2100,
             height: 840,
+            background: '#d0f4f7',
             clouds: 15,
             player: {
                 x: 150,
@@ -333,6 +334,7 @@ module.exports = {
         level2: {
             width: 2100,
             height: 1050,
+            background: '#d0f4f7',
             clouds: 15,
             player: {
                 x: 150,

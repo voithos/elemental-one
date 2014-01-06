@@ -25,9 +25,9 @@
         module.exports = {
             GAME_WIDTH: 800,
             GAME_HEIGHT: 600,
+            DOM_PARENT: "main",
             TILE_WIDTH: 70,
             TILE_HEIGHT: 70,
-            BACKGROUND: "#d0f4f7",
             GRAVITY: 20,
             MOVEMENT_VEL: 210,
             JUMP_VEL: 500,
@@ -322,6 +322,7 @@
                     nextState: "level2",
                     width: 2100,
                     height: 840,
+                    background: "#d0f4f7",
                     clouds: 15,
                     player: {
                         x: 150,
@@ -367,6 +368,7 @@
                 level2: {
                     width: 2100,
                     height: 1050,
+                    background: "#d0f4f7",
                     clouds: 15,
                     player: {
                         x: 150,
@@ -483,16 +485,86 @@
         var extensions = require("./extensions");
         var cfg = require("./config");
         var data = require("./data");
-        var game = window.game = new Phaser.Game(cfg.GAME_WIDTH, cfg.GAME_HEIGHT, Phaser.CANVAS);
+        var game = new Phaser.Game(cfg.GAME_WIDTH, cfg.GAME_HEIGHT, Phaser.CANVAS, cfg.DOM_PARENT);
         var Main = {};
-        var loaded, map, tileset, surface, background, player, goal, clouds, items, backgroundItems, blocks, theme, sfx = {}, elemEmitters = {}, cursors, elemButton, acquireButton, dropButton;
+        var preloadbar, loaded, menubackground, logo, map, tileset, surface, background, player, goal, clouds, items, backgroundItems, blocks, theme, musicdone, sfx = {}, elemEmitters = {}, cursors, elemButton, acquireButton, dropButton;
         function boot() {
             game.physics.collideSpriteVsTilemapLayer = extensions.createSlopedTilemapCollider(cfg.UPWARD_SLOPE_TILES, cfg.DOWNWARD_SLOPE_TILES);
+            game.input.maxPointers = 1;
+            Main.boot = function() {};
+            Main.boot.prototype = {
+                preload: function() {
+                    game.load.image("preloadbar", "assets/images/preloadbar.png");
+                },
+                create: function() {
+                    game.state.start("preloader");
+                }
+            };
+            game.state.add("boot", Main.boot, false);
+            Main.preloader = function() {};
+            Main.preloader.prototype = {
+                preload: function() {
+                    preloadbar = game.add.sprite(0, 0, "preloadbar");
+                    preloadbar.x = (cfg.GAME_WIDTH - preloadbar.width) / 2;
+                    preloadbar.y = cfg.GAME_HEIGHT / 2 - preloadbar.height / 2;
+                    game.load.setPreloadSprite(preloadbar);
+                    preload();
+                },
+                create: function() {
+                    preloadbar.crop.width = preloadbar.width;
+                    var tween = game.add.tween(preloadbar).to({
+                        alpha: 0
+                    }, 800, Phaser.Easing.Linear.None, true);
+                    tween.onComplete.add(function() {
+                        game.state.start("mainmenu");
+                    });
+                }
+            };
+            game.state.add("preloader", Main.preloader, false);
+            Main.mainmenu = function() {};
+            Main.mainmenu.prototype = {
+                create: function() {
+                    theme = game.add.audio("theme");
+                    theme.play("", 0, .3, true);
+                    menubackground = game.add.sprite(0, 0, "menubackground");
+                    menubackground.alpha = 0;
+                    logo = game.add.text(game.world.centerX, game.world.centerY - 150, "ELEMENTAL ONE", {
+                        font: '45px "minecraftiaregular"',
+                        fill: "slategray",
+                        align: "center"
+                    });
+                    logo.anchor.setTo(.5, .5);
+                    var startText = game.add.text(game.world.centerX, game.world.centerY + 200, "press enter", {
+                        font: '25px "minecraftiaregular"',
+                        fill: "black",
+                        align: "center"
+                    });
+                    startText.anchor.setTo(.5, .5);
+                    game.add.tween(startText).to({
+                        alpha: 0
+                    }, 500, Phaser.Easing.Linear.None, true, 0, Infinity, true);
+                    game.add.tween(menubackground).to({
+                        alpha: 1
+                    }, 2e3, Phaser.Easing.Quadratic.Out, true);
+                    var key = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+                    key.onDown.addOnce(function() {
+                        game.add.tween(logo).to({
+                            alpha: 0
+                        }, 2e3, Phaser.Easing.Linear.None, true);
+                        var tween = game.add.tween(menubackground).to({
+                            alpha: 0
+                        }, 2e3, Phaser.Easing.Linear.None, true);
+                        tween.onComplete.add(function() {
+                            game.state.start("level1");
+                        });
+                    });
+                }
+            };
+            game.state.add("mainmenu", Main.mainmenu, false);
             Main.Levels = {};
             Object.keys(data.levels).forEach(function(level) {
                 Main.Levels[level] = function() {};
                 Main.Levels[level].prototype = {
-                    preload: preload,
                     create: function() {
                         game.level = level;
                         game.nextState = data.levels[level].nextState;
@@ -503,12 +575,13 @@
                 };
                 game.state.add(level, Main.Levels[level], false);
             });
-            game.state.start("level1");
+            game.state.start("boot");
         }
         function preload() {
             if (loaded) {
                 return;
             }
+            game.load.image("menubackground", "assets/images/menubackground.png");
             game.load.tilemap("level1", "assets/tilemaps/level1.json", null, Phaser.Tilemap.TILED_JSON);
             game.load.tilemap("level2", "assets/tilemaps/level2.json", null, Phaser.Tilemap.TILED_JSON);
             game.load.tileset("tiles", "assets/tilesets/tiles_spritesheet.png", cfg.TILE_WIDTH, cfg.TILE_HEIGHT);
@@ -526,7 +599,7 @@
             loaded = true;
         }
         function create() {
-            game.stage.backgroundColor = cfg.BACKGROUND;
+            game.stage.backgroundColor = data.levels[game.level].background;
             createAudio();
             map = game.add.tilemap(game.level);
             tileset = game.add.tileset("tiles");
@@ -567,21 +640,18 @@
             elemButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
             acquireButton = game.input.keyboard.addKey(Phaser.Keyboard.Z);
             dropButton = game.input.keyboard.addKey(Phaser.Keyboard.X);
-            if (!theme.isPlaying) {
-                theme.play("", 0, .3, true);
-            }
         }
         function createAudio() {
-            if (theme) {
+            if (musicdone) {
                 return;
             }
-            theme = game.add.audio("theme");
             [ "jumpsound", "pickupsound" ].forEach(function(s) {
                 sfx[s] = game.add.audio(s);
             });
             [ "airsound", "watersound", "earthsound", "firesound" ].forEach(function(s) {
                 sfx[s] = game.add.audio(s, 1, true);
             });
+            musicdone = true;
         }
         function createClouds() {
             if (data.levels[game.level].clouds) {

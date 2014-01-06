@@ -4,9 +4,10 @@ module.exports = {
      */
     GAME_WIDTH: 800,
     GAME_HEIGHT: 600,
+    DOM_PARENT: 'main',
+
     TILE_WIDTH: 70,
     TILE_HEIGHT: 70,
-    BACKGROUND: '#d0f4f7',
     GRAVITY: 20,
     MOVEMENT_VEL: 210,
     JUMP_VEL: 500,
