@@ -269,6 +269,12 @@ var powerblocks = {
 };
 
 module.exports = {
+    mainmenu: {
+        player: {
+            x: 675,
+            y: 343
+        }
+    },
     levels: {
         level1: {
             nextState: 'level2',

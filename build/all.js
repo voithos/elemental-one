@@ -319,6 +319,12 @@
             }
         };
         module.exports = {
+            mainmenu: {
+                player: {
+                    x: 675,
+                    y: 343
+                }
+            },
             levels: {
                 level1: {
                     nextState: "level2",
@@ -519,6 +525,7 @@
             Main.mainmenu = function() {};
             Main.mainmenu.prototype = {
                 create: function() {
+                    game.level = "mainmenu";
                     theme = game.add.audio("theme");
                     theme.play("", 0, .3, true);
                     menubackground = game.add.sprite(0, 0, "menubackground");
@@ -541,8 +548,24 @@
                     game.add.tween(menubackground).to({
                         alpha: 1
                     }, 2e3, Phaser.Easing.Quadratic.Out, true);
+                    addPlayer(data.mainmenu.player.x, data.mainmenu.player.y);
+                    player.body.gravity.y = 0;
+                    player.animations.play("walk");
+                    player.alpha = 0;
+                    game.add.tween(player).to({
+                        alpha: 1
+                    }, 2e3, Phaser.Easing.Quadratic.Out, true);
+                    var ptween = game.add.tween(player).to({
+                        x: player.x - 80
+                    }, 1350, Phaser.Easing.Linear.None, true, 0, Infinity, true);
+                    ptween.onComplete.add(function() {
+                        player.scale.x *= -1;
+                    });
                     var key = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
                     key.onDown.addOnce(function() {
+                        game.add.tween(player).to({
+                            alpha: 0
+                        }, 2e3, Phaser.Easing.Linear.None, true);
                         game.add.tween(logo).to({
                             alpha: 0
                         }, 2e3, Phaser.Easing.Linear.None, true);
@@ -761,8 +784,10 @@
                 elemEmitters[elem.element] = emitter;
             });
         }
-        function addPlayer() {
-            player = game.add.sprite(data.levels[game.level].player.x, data.levels[game.level].player.y, "p1");
+        function addPlayer(x, y) {
+            x = x || data.levels[game.level].player.x;
+            y = y || data.levels[game.level].player.y;
+            player = game.add.sprite(x, y, "p1");
             player.body.collideWorldBounds = true;
             player.body.blockable = true;
             player.body.gravity.y = cfg.GRAVITY;
