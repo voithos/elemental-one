@@ -25,12 +25,26 @@
                 border: 3px solid #2c2c2c;
                 margin: 0 auto;
             }
+
+            #footer {
+                text-align: center;
+                margin: 20px 0;
+                color: #ffffff;
+                font: 12px Courier, monospace;
+            }
+
+            a {
+                color: #6fc4a9;
+            }
         </style>
     </head>
     <body>
         <!-- Hack to get the browser to download the font immediately -->
         <span style="font-family: minecraftiaregular; visibility: hidden; position: absolute; top: -100px;">.</span>
         <div id="main"></div>
+        <div id="footer">
+            &hearts; 2014. Please copy and share. <a href="https://github.com/voithos/elemental-one"><span class="forkme">Fork me on Github</span></a>
+        </div>
         <script src="deps/phaser.js" type="text/javascript" charset="utf-8"></script>
         <script src="build/all.js" type="text/javascript" charset="utf-8"></script>
     </body>
