@@ -151,6 +151,7 @@ function preload() {
 
     game.load.tilemap('level1', 'assets/tilemaps/level1.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tilemap('level2', 'assets/tilemaps/level2.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('level3', 'assets/tilemaps/level3.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tileset('tiles', 'assets/tilesets/tiles_spritesheet.png', cfg.TILE_WIDTH, cfg.TILE_HEIGHT);
 
     game.load.atlas('p1', 'assets/sprites/p1_spritesheet.png', 'assets/sprites/p1_spritesheet.json');
@@ -397,7 +398,12 @@ function addPlayer(x, y) {
 
 function addGoal() {
     if (data.levels[game.level].goal) {
-        goal = game.add.sprite(data.levels[game.level].goal.x, data.levels[game.level].goal.y, 'blocks', cfg.GOAL_TILE);
+        var g = data.levels[game.level].goal;
+        goal = game.add.sprite(g.x, g.y, 'blocks', cfg.GOAL_TILE);
+
+        if (g.width) {
+            goal.width = g.width;
+        }
         goal.alpha = 0;
     }
 }

@@ -339,6 +339,7 @@ module.exports = {
             ]
         },
         level2: {
+            nextState: 'level3',
             width: 2100,
             height: 1050,
             background: '#d0f4f7',
@@ -348,8 +349,8 @@ module.exports = {
                 y: 780
             },
             goal: {
-                x: 1960,
-                y: 500
+                x: 1961,
+                y: 700
             },
             text: [
                 instance(font, {
@@ -381,7 +382,7 @@ module.exports = {
                 instance(powergems.earth, {
                     x: 450,
                     y: 300
-                }),
+                })
             ],
             backgroundItems: [
                 instance(backgroundItems.goalStar, {
@@ -423,6 +424,92 @@ module.exports = {
             elements: [
                 elements.water,
                 elements.earth
+            ]
+        },
+        level3: {
+            nextState: null,
+            width: 3850,
+            height: 2170,
+            background: '#d0f4f7',
+            clouds: 35,
+            player: {
+                x: 150,
+                y: 1740
+            },
+            goal: {
+                x: 1890,
+                y: 420,
+                width: 140
+            },
+            items: [
+                instance(powergems.water, {
+                    x: 705,
+                    y: 1980
+                }),
+                instance(powergems.earth, {
+                    x: 3780,
+                    y: 1840
+                }),
+                instance(powergems.fire, {
+                    x: 3745,
+                    y: 610
+                })
+            ],
+            backgroundItems: [
+                instance(backgroundItems.goalStar, {
+                    x: 1960,
+                    y: 313
+                }),
+                instance(backgroundItems.goalStar, {
+                    x: 1890,
+                    y: 313
+                })
+            ],
+            blocks: [
+                // Water barrier
+                instance(powerblocks.water, {
+                    x: 2615,
+                    y: 1930
+                }),
+                instance(powerblocks.water, {
+                    x: 2615,
+                    y: 1830
+                }),
+                
+                // First earth barrier
+                instance(powerblocks.earth, {
+                    x: 1475,
+                    y: 1700
+                }),
+                instance(powerblocks.earth, {
+                    x: 1475,
+                    y: 1600
+                }),
+
+                // Earth island barrier
+                instance(powerblocks.earth, {
+                    x: 3550,
+                    y: 550
+                }),
+                instance(powerblocks.earth, {
+                    x: 3550,
+                    y: 450
+                }),
+
+                // Fire island barrier
+                instance(powerblocks.fire, {
+                    x: 1800,
+                    y: 1400
+                }),
+                instance(powerblocks.fire, {
+                    x: 1800,
+                    y: 1300
+                })
+            ],
+            elements: [
+                elements.water,
+                elements.earth,
+                elements.fire
             ]
         }
     }

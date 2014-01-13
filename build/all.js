@@ -376,6 +376,7 @@
                     elements: [ elements.water ]
                 },
                 level2: {
+                    nextState: "level3",
                     width: 2100,
                     height: 1050,
                     background: "#d0f4f7",
@@ -385,8 +386,8 @@
                         y: 780
                     },
                     goal: {
-                        x: 1960,
-                        y: 500
+                        x: 1961,
+                        y: 700
                     },
                     text: [ instance(font, {
                         x: 250,
@@ -436,6 +437,65 @@
                         y: 200
                     }) ],
                     elements: [ elements.water, elements.earth ]
+                },
+                level3: {
+                    nextState: null,
+                    width: 3850,
+                    height: 2170,
+                    background: "#d0f4f7",
+                    clouds: 35,
+                    player: {
+                        x: 150,
+                        y: 1740
+                    },
+                    goal: {
+                        x: 1890,
+                        y: 420,
+                        width: 140
+                    },
+                    items: [ instance(powergems.water, {
+                        x: 705,
+                        y: 1980
+                    }), instance(powergems.earth, {
+                        x: 3780,
+                        y: 1840
+                    }), instance(powergems.fire, {
+                        x: 3745,
+                        y: 610
+                    }) ],
+                    backgroundItems: [ instance(backgroundItems.goalStar, {
+                        x: 1960,
+                        y: 313
+                    }), instance(backgroundItems.goalStar, {
+                        x: 1890,
+                        y: 313
+                    }) ],
+                    blocks: [ instance(powerblocks.water, {
+                        x: 2615,
+                        y: 1930
+                    }), instance(powerblocks.water, {
+                        x: 2615,
+                        y: 1830
+                    }), instance(powerblocks.earth, {
+                        x: 1475,
+                        y: 1700
+                    }), instance(powerblocks.earth, {
+                        x: 1475,
+                        y: 1600
+                    }), instance(powerblocks.earth, {
+                        x: 3550,
+                        y: 550
+                    }), instance(powerblocks.earth, {
+                        x: 3550,
+                        y: 450
+                    }), instance(powerblocks.fire, {
+                        x: 1800,
+                        y: 1400
+                    }), instance(powerblocks.fire, {
+                        x: 1800,
+                        y: 1300
+                    }) ],
+                    elements: [ elements.water, elements.earth, elements.fire ]
                 }
             }
         };
@@ -603,6 +663,7 @@
             game.load.image("occluder", "assets/images/occluder.png");
             game.load.tilemap("level1", "assets/tilemaps/level1.json", null, Phaser.Tilemap.TILED_JSON);
             game.load.tilemap("level2", "assets/tilemaps/level2.json", null, Phaser.Tilemap.TILED_JSON);
+            game.load.tilemap("level3", "assets/tilemaps/level3.json", null, Phaser.Tilemap.TILED_JSON);
             game.load.tileset("tiles", "assets/tilesets/tiles_spritesheet.png", cfg.TILE_WIDTH, cfg.TILE_HEIGHT);
             game.load.atlas("p1", "assets/sprites/p1_spritesheet.png", "assets/sprites/p1_spritesheet.json");
             game.load.atlasXML("items", "assets/sprites/items_spritesheet.png", "assets/sprites/items_spritesheet.xml");
@@ -804,7 +865,11 @@
         }
         function addGoal() {
             if (data.levels[game.level].goal) {
-                goal = game.add.sprite(data.levels[game.level].goal.x, data.levels[game.level].goal.y, "blocks", cfg.GOAL_TILE);
+                var g = data.levels[game.level].goal;
+                goal = game.add.sprite(g.x, g.y, "blocks", cfg.GOAL_TILE);
+                if (g.width) {
+                    goal.width = g.width;
+                }
                 goal.alpha = 0;
             }
         }
