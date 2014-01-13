@@ -3,9 +3,14 @@
  <tileset firstgid="1" name="tiles_spritesheet" tilewidth="70" tileheight="70">
   <image source="../tilesets/tiles_spritesheet.png" width="840" height="912"/>
  </tileset>
+ <layer name="backbackground" width="55" height="31">
+  <data encoding="base64" compression="zlib">
+   eJztz7EJwDAMRUEN45EygOvg/evIOJXxAhZ38BGoexFw1v775vr2u93smF1PbsTqq9R2WgXaAAAAAADq+ADWGAVt
+  </data>
+ </layer>
  <layer name="background" width="55" height="31">
   <data encoding="base64" compression="zlib">
-   eJzt1kEKhDAQRNE6iCtXM3sPUJfLKbzsKCgiqGM0sbulPvROmjyzCaCUUkqpCCXrA1Qs4d0+pf7FYfppPrZHKRqH6bDYGsT1tdOMEWvXG3xjxLYruo84dkX1Eedc0XxEniuKj7jm8u4j7rm8+ogyLm8+oqzLi4+o46rp+574hqjrsro/4hnXVd/83tvb58V15/6O9nlx5fhy9kXK6p9bzA+PWNIW
+   eJzt1kEOgjAQheEXD+HCuHJhdO8B3uU4hZcVkho1qUhLh5mp8yezAdL0oywAoijfIXPtvPkuZNulifz0/l328j3uK+9F/9egvQHBBvTti6JfcZx7movuVprGcW542Y7w6zulmSI+XT34poi8y7uPmHd59RHLXN58RJnLi4+oc1n3EetcVn1EG5c1H9HWZcVHyLgkfdcFzxCyLq3zI7Zx1fqe/3vf1rPiWnN+c+tZcZX4StbzlNY715gHJnjSxg==
   </data>
  </layer>
  <layer name="surface" width="55" height="31">

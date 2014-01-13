@@ -548,7 +548,7 @@
         var data = require("./data");
         var game = new Phaser.Game(cfg.GAME_WIDTH, cfg.GAME_HEIGHT, Phaser.CANVAS, cfg.DOM_PARENT);
         var Main = {};
-        var preloadbar, loaded, menubackground, logo, occluder, map, tileset, surface, background, player, goal, clouds, items, backgroundItems, blocks, theme, musicdone, transitioning, gotoNext, sfx = {}, elemEmitters = {}, cursors, elemButton, acquireButton, dropButton;
+        var preloadbar, loaded, menubackground, logo, occluder, map, tileset, surface, background, backbackground, player, goal, clouds, items, backgroundItems, blocks, theme, musicdone, transitioning, gotoNext, sfx = {}, elemEmitters = {}, cursors, elemButton, acquireButton, dropButton;
         function boot() {
             game.physics.collideSpriteVsTilemapLayer = extensions.createSlopedTilemapCollider(cfg.UPWARD_SLOPE_TILES, cfg.DOWNWARD_SLOPE_TILES);
             game.input.maxPointers = 1;
@@ -705,8 +705,9 @@
                 tileset.setCollision(tile, false, false, false, false);
             });
             createClouds();
-            background = game.add.tilemapLayer(0, 0, cfg.GAME_WIDTH, cfg.GAME_HEIGHT, tileset, map, 0);
-            surface = game.add.tilemapLayer(0, 0, cfg.GAME_WIDTH, cfg.GAME_HEIGHT, tileset, map, 1);
+            backbackground = game.add.tilemapLayer(0, 0, cfg.GAME_WIDTH, cfg.GAME_HEIGHT, tileset, map, 0);
+            background = game.add.tilemapLayer(0, 0, cfg.GAME_WIDTH, cfg.GAME_HEIGHT, tileset, map, 1);
+            surface = game.add.tilemapLayer(0, 0, cfg.GAME_WIDTH, cfg.GAME_HEIGHT, tileset, map, 2);
             surface.resizeWorld();
             createBlocks();
             createBackgroundItems();

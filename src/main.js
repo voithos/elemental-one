@@ -11,7 +11,7 @@ var game = new Phaser.Game(cfg.GAME_WIDTH, cfg.GAME_HEIGHT, Phaser.CANVAS, cfg.D
 
 var Main = {};
 
-var preloadbar, loaded, menubackground, logo, occluder, map, tileset, surface, background,
+var preloadbar, loaded, menubackground, logo, occluder, map, tileset, surface, background, backbackground,
     player, goal, clouds, items, backgroundItems, blocks, theme, musicdone, transitioning, gotoNext,
     sfx = {}, elemEmitters = {},
     cursors, elemButton, acquireButton, dropButton;
@@ -207,9 +207,10 @@ function create() {
 
     createClouds();
 
-    // Layer 1 is the surface, layer 0 is the background
-    background = game.add.tilemapLayer(0, 0, cfg.GAME_WIDTH, cfg.GAME_HEIGHT, tileset, map, 0);
-    surface = game.add.tilemapLayer(0, 0, cfg.GAME_WIDTH, cfg.GAME_HEIGHT, tileset, map, 1);
+    // Layer 2 is the surface, layers 1 and 0 are the background
+    backbackground = game.add.tilemapLayer(0, 0, cfg.GAME_WIDTH, cfg.GAME_HEIGHT, tileset, map, 0);
+    background = game.add.tilemapLayer(0, 0, cfg.GAME_WIDTH, cfg.GAME_HEIGHT, tileset, map, 1);
+    surface = game.add.tilemapLayer(0, 0, cfg.GAME_WIDTH, cfg.GAME_HEIGHT, tileset, map, 2);
     surface.resizeWorld();
 
     createBlocks();

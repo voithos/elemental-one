@@ -3,6 +3,11 @@
  <tileset firstgid="1" name="tiles_spritesheet" tilewidth="70" tileheight="70">
   <image source="../tilesets/tiles_spritesheet.png" width="840" height="912"/>
  </tileset>
+ <layer name="backbackground" width="30" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMApGLgAABwgAAQ==
+  </data>
+ </layer>
  <layer name="background" width="30" height="15">
   <data encoding="base64" compression="zlib">
    eJxjYBgFo4D2QAyIlQbaEaNgyAK9AbLXCkorMSDSr+YAuYUSMJMCPBB2kms3ufYAAFSWHIw=
