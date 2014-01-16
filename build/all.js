@@ -43,6 +43,7 @@
             BLOCK_FADE_TIME: 1e3,
             LEVEL_FADEIN_TIME: 1e3,
             LEVEL_FADEOUT_TIME: 500,
+            MUSIC_FADE_INCR: .0025,
             PLAYER_BOUND_WIDTH: 30,
             PLAYER_BOUND_HEIGHT: 75,
             PLAYER_BOUND_H_OFFSET: 10,
@@ -258,6 +259,69 @@
                     easing: Phaser.Easing.Quadratic.InOut
                 } ],
                 tweenLoop: true
+            },
+            winStarTop: {
+                frameName: "star.png",
+                noGravity: true,
+                tween: [ {
+                    x: -30,
+                    y: 45,
+                    duration: 800,
+                    easing: Phaser.Easing.Quadratic.InOut
+                }, {
+                    x: 30,
+                    y: 45,
+                    duration: 800,
+                    easing: Phaser.Easing.Quadratic.InOut
+                }, {
+                    x: 0,
+                    y: 0,
+                    duration: 800,
+                    easing: Phaser.Easing.Quadratic.InOut
+                } ],
+                tweenLoop: true
+            },
+            winStarLeft: {
+                frameName: "star.png",
+                noGravity: true,
+                tween: [ {
+                    x: 60,
+                    y: 0,
+                    duration: 800,
+                    easing: Phaser.Easing.Quadratic.InOut
+                }, {
+                    x: 30,
+                    y: -45,
+                    duration: 800,
+                    easing: Phaser.Easing.Quadratic.InOut
+                }, {
+                    x: 0,
+                    y: 0,
+                    duration: 800,
+                    easing: Phaser.Easing.Quadratic.InOut
+                } ],
+                tweenLoop: true
+            },
+            winStarRight: {
+                frameName: "star.png",
+                noGravity: true,
+                tween: [ {
+                    x: -30,
+                    y: -45,
+                    duration: 800,
+                    easing: Phaser.Easing.Quadratic.InOut
+                }, {
+                    x: -60,
+                    y: 0,
+                    duration: 800,
+                    easing: Phaser.Easing.Quadratic.InOut
+                }, {
+                    x: 0,
+                    y: 0,
+                    duration: 800,
+                    easing: Phaser.Easing.Quadratic.InOut
+                } ],
+                tweenLoop: true
             }
         };
         var powerblocks = {
@@ -439,7 +503,7 @@
                     elements: [ elements.water, elements.earth ]
                 },
                 level3: {
-                    nextState: null,
+                    nextState: "level4",
                     width: 3850,
                     height: 2170,
                     background: "#d0f4f7",
@@ -496,6 +560,89 @@
                         y: 1300
                     }) ],
                     elements: [ elements.water, elements.earth, elements.fire ]
+                },
+                level4: {
+                    nextState: null,
+                    width: 2590,
+                    height: 3150,
+                    background: "#697272",
+                    player: {
+                        x: 150,
+                        y: 2900
+                    },
+                    goal: {
+                        x: 1955,
+                        y: 490,
+                        width: 140,
+                        slow: true
+                    },
+                    items: [ instance(powergems.water, {
+                        x: 400,
+                        y: 480
+                    }), instance(powergems.earth, {
+                        x: 2315,
+                        y: 2420
+                    }), instance(powergems.fire, {
+                        x: 2480,
+                        y: 1020
+                    }), instance(powergems.air, {
+                        x: 30,
+                        y: 1980
+                    }) ],
+                    backgroundItems: [ instance(backgroundItems.winStarTop, {
+                        x: 2e3,
+                        y: 300
+                    }), instance(backgroundItems.winStarLeft, {
+                        x: 1970,
+                        y: 345
+                    }), instance(backgroundItems.winStarRight, {
+                        x: 2030,
+                        y: 345
+                    }) ],
+                    blocks: [ instance(powerblocks.water, {
+                        x: 2015,
+                        y: 2330
+                    }), instance(powerblocks.water, {
+                        x: 2015,
+                        y: 2230
+                    }), instance(powerblocks.water, {
+                        x: 1610,
+                        y: 930
+                    }), instance(powerblocks.water, {
+                        x: 1610,
+                        y: 830
+                    }), instance(powerblocks.earth, {
+                        x: 2170,
+                        y: 930
+                    }), instance(powerblocks.earth, {
+                        x: 2170,
+                        y: 830
+                    }), instance(powerblocks.fire, {
+                        x: 70,
+                        y: 1980
+                    }), instance(powerblocks.fire, {
+                        x: 70,
+                        y: 1880
+                    }), instance(powerblocks.fire, {
+                        x: 0,
+                        y: 1980
+                    }), instance(powerblocks.fire, {
+                        x: 0,
+                        y: 1880
+                    }), instance(powerblocks.air, {
+                        x: 1200,
+                        y: 450
+                    }), instance(powerblocks.air, {
+                        x: 1200,
+                        y: 350
+                    }), instance(powerblocks.air, {
+                        x: 1270,
+                        y: 450
+                    }), instance(powerblocks.air, {
+                        x: 1270,
+                        y: 350
+                    }) ],
+                    elements: [ elements.water, elements.earth, elements.fire, elements.air ]
                 }
             }
         };
@@ -548,7 +695,7 @@
         var data = require("./data");
         var game = new Phaser.Game(cfg.GAME_WIDTH, cfg.GAME_HEIGHT, Phaser.CANVAS, cfg.DOM_PARENT);
         var Main = {};
-        var preloadbar, loaded, menubackground, logo, occluder, map, tileset, surface, background, backbackground, player, goal, clouds, items, backgroundItems, blocks, theme, musicdone, transitioning, gotoNext, sfx = {}, elemEmitters = {}, cursors, elemButton, acquireButton, dropButton;
+        var preloadbar, loaded, menubackground, logo, occluder, map, tileset, surface, background, backbackground, player, goal, clouds, items, backgroundItems, blocks, theme, musicdone, transitioning, gotoNext, isDone, sfx = {}, elemEmitters = {}, cursors, elemButton, acquireButton, dropButton;
         function boot() {
             game.physics.collideSpriteVsTilemapLayer = extensions.createSlopedTilemapCollider(cfg.UPWARD_SLOPE_TILES, cfg.DOWNWARD_SLOPE_TILES);
             game.input.maxPointers = 1;
@@ -664,6 +811,7 @@
             game.load.tilemap("level1", "assets/tilemaps/level1.json", null, Phaser.Tilemap.TILED_JSON);
             game.load.tilemap("level2", "assets/tilemaps/level2.json", null, Phaser.Tilemap.TILED_JSON);
             game.load.tilemap("level3", "assets/tilemaps/level3.json", null, Phaser.Tilemap.TILED_JSON);
+            game.load.tilemap("level4", "assets/tilemaps/level4.json", null, Phaser.Tilemap.TILED_JSON);
             game.load.tileset("tiles", "assets/tilesets/tiles_spritesheet.png", cfg.TILE_WIDTH, cfg.TILE_HEIGHT);
             game.load.atlas("p1", "assets/sprites/p1_spritesheet.png", "assets/sprites/p1_spritesheet.json");
             game.load.atlasXML("items", "assets/sprites/items_spritesheet.png", "assets/sprites/items_spritesheet.xml");
@@ -868,6 +1016,7 @@
             if (data.levels[game.level].goal) {
                 var g = data.levels[game.level].goal;
                 goal = game.add.sprite(g.x, g.y, "blocks", cfg.GOAL_TILE);
+                goal.slow = g.slow;
                 if (g.width) {
                     goal.width = g.width;
                 }
@@ -877,20 +1026,49 @@
         function update() {
             if (gotoNext) {
                 gotoNext = false;
-                game.state.start(game.nextState);
+                if (game.nextState) {
+                    game.state.start(game.nextState);
+                } else {
+                    isDone = true;
+                    game.stage.backgroundColor = "black";
+                    var youwin = game.add.text(game.camera.view.x + game.camera.view.width / 2, game.camera.view.y + game.camera.view.height / 2, "YOU WIN!", {
+                        font: '45px "minecraftiaregular"',
+                        fill: "white",
+                        align: "center"
+                    });
+                    youwin.anchor.setTo(.5, .5);
+                    youwin.alpha = 0;
+                    var tween = game.add.tween(youwin).to({
+                        alpha: 1
+                    }, 2e3, Phaser.Easing.Quadratic.Out, true);
+                    tween.onComplete.addOnce(function() {
+                        var theend = game.add.text(game.camera.view.x + game.camera.view.width / 2, game.camera.view.y + game.camera.view.height / 2 + 60, "THE END", {
+                            font: '25px "minecraftiaregular"',
+                            fill: "white",
+                            align: "center"
+                        });
+                        theend.anchor.setTo(.5, .5);
+                        theend.alpha = 0;
+                        game.add.tween(theend).to({
+                            alpha: 1
+                        }, 2e3, Phaser.Easing.Quadratic.Out, true);
+                    });
+                }
             }
             var emitter = elemEmitters[player.element] || null;
             game.physics.overlap(player, goal, function() {
-                if (!transitioning) {
+                if (!transitioning && !isDone) {
                     transitioning = true;
                     occluder.x = player.x;
                     occluder.y = player.y;
+                    var fadeTime = goal.slow ? cfg.LEVEL_FADEOUT_TIME * 5 : cfg.LEVEL_FADEOUT_TIME;
                     var tween = game.add.tween(occluder).to({
                         alpha: 1
-                    }, cfg.LEVEL_FADEOUT_TIME, Phaser.Easing.Linear.None, true);
+                    }, fadeTime, Phaser.Easing.Linear.None);
                     tween.onComplete.addOnce(function() {
                         gotoNext = true;
                     });
+                    tween.start();
                 }
             });
             game.physics.collide(player, surface);
@@ -898,6 +1076,13 @@
             game.physics.collide(items, surface);
             game.physics.collide(blocks, surface);
             game.physics.collide(blocks, blocks);
+            if (isDone) {
+                theme.volume = Math.max(theme.volume - cfg.MUSIC_FADE_INCR, 0);
+                if (theme.volume == 0) {
+                    theme.stop();
+                }
+                return;
+            }
             if (emitter) {
                 game.physics.collide(emitter, surface);
                 game.physics.overlap(emitter, blocks, function(particle, block) {

@@ -12,7 +12,7 @@ var game = new Phaser.Game(cfg.GAME_WIDTH, cfg.GAME_HEIGHT, Phaser.CANVAS, cfg.D
 var Main = {};
 
 var preloadbar, loaded, menubackground, logo, occluder, map, tileset, surface, background, backbackground,
-    player, goal, clouds, items, backgroundItems, blocks, theme, musicdone, transitioning, gotoNext,
+    player, goal, clouds, items, backgroundItems, blocks, theme, musicdone, transitioning, gotoNext, isDone,
     sfx = {}, elemEmitters = {},
     cursors, elemButton, acquireButton, dropButton;
 
@@ -152,6 +152,7 @@ function preload() {
     game.load.tilemap('level1', 'assets/tilemaps/level1.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tilemap('level2', 'assets/tilemaps/level2.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tilemap('level3', 'assets/tilemaps/level3.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('level4', 'assets/tilemaps/level4.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tileset('tiles', 'assets/tilesets/tiles_spritesheet.png', cfg.TILE_WIDTH, cfg.TILE_HEIGHT);
 
     game.load.atlas('p1', 'assets/sprites/p1_spritesheet.png', 'assets/sprites/p1_spritesheet.json');
@@ -401,6 +402,7 @@ function addGoal() {
     if (data.levels[game.level].goal) {
         var g = data.levels[game.level].goal;
         goal = game.add.sprite(g.x, g.y, 'blocks', cfg.GOAL_TILE);
+        goal.slow = g.slow;
 
         if (g.width) {
             goal.width = g.width;
@@ -417,23 +419,65 @@ function update() {
     if (gotoNext) {
         gotoNext = false;
 
-        // Transition to next level (or state)
-        game.state.start(game.nextState)
+        if (game.nextState) {
+            // Transition to next level (or state)
+            game.state.start(game.nextState);
+        } else {
+            isDone = true;
+
+            // Show end screen
+            game.stage.backgroundColor = 'black';
+            var youwin = game.add.text(
+                game.camera.view.x + game.camera.view.width / 2,
+                game.camera.view.y + game.camera.view.height / 2,
+                'YOU WIN!',
+                {
+                    font: '45px "minecraftiaregular"',
+                    fill: 'white',
+                    align: 'center'
+                }
+            );
+
+            youwin.anchor.setTo(0.5, 0.5);
+            youwin.alpha = 0;
+
+            var tween = game.add.tween(youwin).to({ alpha: 1 }, 2000, Phaser.Easing.Quadratic.Out, true);
+            tween.onComplete.addOnce(function() {
+                var theend = game.add.text(
+                    game.camera.view.x + game.camera.view.width / 2,
+                    game.camera.view.y + game.camera.view.height / 2 + 60,
+                    'THE END',
+                    {
+                        font: '25px "minecraftiaregular"',
+                        fill: 'white',
+                        align: 'center'
+                    }
+                );
+
+                theend.anchor.setTo(0.5, 0.5);
+                theend.alpha = 0;
+
+                game.add.tween(theend).to({ alpha: 1 }, 2000, Phaser.Easing.Quadratic.Out, true);
+            });
+        }
     }
 
     var emitter = elemEmitters[player.element] || null;
 
     // Collisions
     game.physics.overlap(player, goal, function() {
-        if (!transitioning) {
+        if (!transitioning && !isDone) {
             transitioning = true;
             occluder.x = player.x;
             occluder.y = player.y;
 
-            var tween = game.add.tween(occluder).to({ alpha: 1 }, cfg.LEVEL_FADEOUT_TIME, Phaser.Easing.Linear.None, true);
+            var fadeTime = goal.slow ? cfg.LEVEL_FADEOUT_TIME * 5 : cfg.LEVEL_FADEOUT_TIME;
+
+            var tween = game.add.tween(occluder).to({ alpha: 1 }, fadeTime, Phaser.Easing.Linear.None);
             tween.onComplete.addOnce(function() {
                 gotoNext = true;
             });
+            tween.start();
         }
     });
     game.physics.collide(player, surface);
@@ -441,6 +485,18 @@ function update() {
     game.physics.collide(items, surface);
     game.physics.collide(blocks, surface);
     game.physics.collide(blocks, blocks);
+
+    // Hack done because changing state fails completely on the last level,
+    // so we have to add the finishing screen over the level, but we still
+    // need collisions, so we put this halfway
+    if (isDone) {
+        // Fade out background music
+        theme.volume = Math.max(theme.volume - cfg.MUSIC_FADE_INCR, 0);
+        if (theme.volume == 0) {
+            theme.stop();
+        }
+        return;
+    }
 
     if (emitter) {
         game.physics.collide(emitter, surface);
@@ -634,10 +690,6 @@ function update() {
 }
 
 function render() {
-    // game.debug.renderSpriteBody(player);
-    // game.debug.renderSpriteBody(items.getAt(0));
-    // game.debug.renderSpriteInfo(player, 150, 150);
-    // game.debug.renderSpriteInfo(items.getAt(0), 450, 150);
 }
 
 window.onload = boot;

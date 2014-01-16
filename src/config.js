@@ -29,6 +29,8 @@ module.exports = {
     LEVEL_FADEIN_TIME: 1000,
     LEVEL_FADEOUT_TIME: 500,
 
+    MUSIC_FADE_INCR: 0.0025,
+
     /**
      * Asset settings
      */
